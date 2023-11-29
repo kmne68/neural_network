@@ -10,9 +10,9 @@ import junit.framework.TestCase;
  *
  * @author kemery
  */
-public class Neural_networkTest extends TestCase {
+public class NeuralNetworkTest extends TestCase {
     
-    public Neural_networkTest(String testName) {
+    public NeuralNetworkTest(String testName) {
         super(testName);
     }
     

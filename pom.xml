@@ -15,7 +15,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>18</maven.compiler.source>
         <maven.compiler.target>18</maven.compiler.target>
-        <exec.mainClass>com.kmne68.neural_network.Neural_network</exec.mainClass>
+        <exec.mainClass>com.kmne68.neural_network.NeuralNetwork</exec.mainClass>
     </properties>
     <name>NeuralNetwork</name>
 </project>
