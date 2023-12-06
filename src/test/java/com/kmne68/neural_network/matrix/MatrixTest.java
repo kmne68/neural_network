@@ -4,13 +4,17 @@
  */
 package com.kmne68.neural_network.matrix;
 
+import com.kmne68.matrix.Matrix;
 import junit.framework.TestCase;
+
 
 /**
  *
  * @author kemery
  */
 public class MatrixTest extends TestCase {
+  
+  private static final String NUMBER_FORMAT = "%.";
   
   public MatrixTest(String testName) {
     super(testName);
@@ -26,9 +30,19 @@ public class MatrixTest extends TestCase {
     super.tearDown();
   }
 
+  public void testSomeMethod() {
+    // TODO review the generated test code and remove the default call to fail.
+    System.out.println("This is only a test...");
+    
+    Matrix m = new Matrix(3, 4, i -> i*2);
+//    fail("The test case is a prototype.");
+  }
   
-  public void constructionTest() {
-    System.out.println("Hello");
+  
+  public String toString() {
+    StringBuilder sb = new StringBuilder();
+    
+    return sb.toString();
   }
   
 }
