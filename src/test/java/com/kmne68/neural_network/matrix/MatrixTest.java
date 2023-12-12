@@ -32,8 +32,35 @@ public class MatrixTest extends TestCase {
   public void testSomeMethod() {
     
     Matrix m = new Matrix(3, 4, i -> i*2);
+    String text = m.toString();
+    double[] expected = new double[12];
     
-    System.out.println(m);
+    for(int i = 0; i < expected.length; i++) {
+      expected[i] = i * 2;
+    }
+    
+    int index = 0;
+    var rows = text.split("\n");
+    
+    assertTrue(rows.length == 3);
+    
+    
+    for(var row: rows) {
+      
+      var values = row.split("\\s+");      
+      for(var textValue: values) {
+        
+        if(textValue.length() == 0) {
+          continue;
+        }
+        
+        var doubleValue = Double.valueOf(textValue);
+        
+        assertTrue(Math.abs(doubleValue - expected[index]) < 0.00001);
+        
+        index++;
+      }
+    }
   }
   
 
