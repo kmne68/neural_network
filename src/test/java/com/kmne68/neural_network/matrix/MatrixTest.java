@@ -14,7 +14,6 @@ import junit.framework.TestCase;
  */
 public class MatrixTest extends TestCase {
   
-  private static final String NUMBER_FORMAT = "%.";
   
   public MatrixTest(String testName) {
     super(testName);
@@ -31,18 +30,11 @@ public class MatrixTest extends TestCase {
   }
 
   public void testSomeMethod() {
-    // TODO review the generated test code and remove the default call to fail.
-    System.out.println("This is only a test...");
     
     Matrix m = new Matrix(3, 4, i -> i*2);
-//    fail("The test case is a prototype.");
-  }
-  
-  
-  public String toString() {
-    StringBuilder sb = new StringBuilder();
     
-    return sb.toString();
+    System.out.println(m);
   }
   
+
 }
