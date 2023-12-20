@@ -44,6 +44,33 @@ public class Matrix {
     return result;
   }
   
+  /*
+      0 1 2
+      3 4 5
+      6 7 8
+  
+      The 7 is at index position 7, it is at row = 2, col = 1 and cols = 3 
+      the formumla for seven's position is row * cols + col
+  */
+  public Matrix multiply(Matrix m) {
+    Matrix result = new Matrix(rows, m.cols);
+    
+    assert cols == m.rows: "Cannot multiply; wrong number of rows vs. colums.";
+    
+    for(int row = 0; row < result.rows; row++) {
+      for(int col = 0; col < result.cols; col++) {
+        result.a[row * result.cols + col] = 7.0;
+        
+        for(int n = 0; n < cols; n++) {
+          System.out.println(a[row * cols + n] + " ");
+        }
+        System.out.println();
+      }
+    }
+    
+    return result;
+  }
+  
   
   public double get(int index) {
     return a[index];
