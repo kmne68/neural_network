@@ -57,10 +57,23 @@ public class Matrix {
     
     assert cols == m.rows: "Cannot multiply; wrong number of rows vs. colums.";
     
+    /**
+     * OPTIMIZATION
+     * 
+     * Potential orders of multiplication
+     * row, col, n ==> initial order
+     * row, n, col ==> final order
+     * col, n, row
+     * col, row, n
+     * n, row, col
+     * n, col, row
+     */
+    
+    
     for(int row = 0; row < result.rows; row++) {
-      for(int col = 0; col < result.cols; col++) {
+      for(int n = 0; n < cols; n++) {
+        for(int col = 0; col < result.cols; col++) {
         
-        for(int n = 0; n < cols; n++) {
           result.a[row * result.cols + col] += a[row * cols + n] * m.a[col + n * m.cols];
         }
       }
