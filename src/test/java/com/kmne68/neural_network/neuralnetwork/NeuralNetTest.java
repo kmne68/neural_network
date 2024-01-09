@@ -28,13 +28,22 @@ public class NeuralNetTest extends TestCase {
   }
 
   
-  public void test() {
+  public void testAddBias() {
     
-    Matrix input = new Matrix(3, 1, i -> (i + 1));
+    // Threee neurons
+    Matrix input = new Matrix(3, 3, i -> (i + 1));
     Matrix weights = new Matrix(3, 3, i -> (i + 1));  // 3 rows (i.e. neurons) need 3 weights
     Matrix biases = new Matrix(3, 1, i -> (i + 1));   
     
-    Matrix result = weights.multiply(input);
+    Matrix result = weights.multiply(input).modify((row, col, value) -> value + biases.get(row));
+    
+    double[] expectedValues = { +31.00000, +37.00000, +43.00000,
+                                +68.00000, +83.00000, +98.00000,
+                                +105.00000, +129.00000, +153.00000 };
+    
+    Matrix expected = new Matrix(3, 3, i -> expectedValues[i]);
+    
+    assertTrue(expected.equals(result));
     
     System.out.println("inputs: \n" + input);
     System.out.println("weights: \n" + weights);

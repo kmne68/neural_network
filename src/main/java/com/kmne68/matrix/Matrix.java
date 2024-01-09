@@ -33,6 +33,11 @@ public class Matrix {
   }
   
   
+  public interface RowColumnProducer {
+    double produce(int row, int col, double value);
+  }
+  
+  
   public Matrix apply(ValueProducer producer) {
     
     Matrix result = new Matrix(rows, cols);
@@ -43,6 +48,22 @@ public class Matrix {
     
     return result;
   }
+  
+  
+  public Matrix modify(RowColumnProducer producer) {
+    
+    int index = 0;
+    
+    for(int row = 0; row < rows; ++row) {
+      for(int col = 0; col < cols; ++col) {
+        a[index] = producer.produce(row, col, a[index]);
+        
+        ++index;
+      }
+    }
+    return this;
+  }
+  
   
   /*
       0 1 2
