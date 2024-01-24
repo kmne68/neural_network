@@ -5,6 +5,7 @@
 package com.kmne68.neural_network.neuralnetwork;
 
 import com.kmne68.matrix.Matrix;
+import java.util.Random;
 import junit.framework.TestCase;
 
 /**
@@ -12,6 +13,8 @@ import junit.framework.TestCase;
  * @author kemery
  */
 public class NeuralNetTest extends TestCase {
+  
+  private Random random = new Random();
   
   public NeuralNetTest(String testName) {
     super(testName);
@@ -49,5 +52,39 @@ public class NeuralNetTest extends TestCase {
     System.out.println("weights: \n" + weights);
     System.out.println("biases: \n" + biases);
     System.out.println("result: \n" + result);
+  }
+  
+  
+    public void testReLu() {
+      
+      final int numberOfNeurons = 5;
+      final int numberOfInputs = 6;
+      final int inputSize = 4;
+    
+    // Threee neurons
+    // Use of Gaussian helps avoid overflow issues in the network
+    Matrix input = new Matrix(inputSize, numberOfInputs, i -> random.nextDouble());
+    Matrix weights = new Matrix(numberOfNeurons, inputSize, i -> random.nextGaussian());  // 3 rows (i.e. neurons) need 3 weights
+    Matrix biases = new Matrix(numberOfNeurons, 1, i -> random.nextGaussian());   
+    
+    Matrix result1 = weights.multiply(input).modify((row, col, value) -> value + biases.get(row));
+    Matrix result2 = weights.multiply(input).modify((row, col, value) -> value + biases.get(row)).modify(value -> value > 0 ? value : 0);
+    
+    result2.forEach((index, value) -> {
+      
+      double originalValue = result1.get(index);
+      
+      if(originalValue > 0) {
+        assertTrue(Math.abs(originalValue - value) < 0.000001);
+      }
+      else {
+        assertTrue(Math.abs(value) < 0.000001);
+      }
+    });
+    
+    System.out.println("inputs: \n" + input);
+    System.out.println("weights: \n" + weights);
+    System.out.println("biases: \n" + biases);
+    System.out.println("result: \n" + result1);
   }
 }

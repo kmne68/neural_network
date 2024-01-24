@@ -28,8 +28,13 @@ public class Matrix {
   /**
    * General purpose method to produce a new Matrix
    */  
-  public interface ValueProducer {
+  public interface IndexValueProducer {
     double produce(int index, double value);
+  }
+  
+  
+  public interface ValueProducer {
+    double produce(double value);
   }
   
   
@@ -38,7 +43,12 @@ public class Matrix {
   }
   
   
-  public Matrix apply(ValueProducer producer) {
+  public interface IndexValueConsumer {
+    void consume(int index, double value);
+  }
+  
+  
+  public Matrix apply(IndexValueProducer producer) {
     
     Matrix result = new Matrix(rows, cols);
     
@@ -47,6 +57,28 @@ public class Matrix {
     }
     
     return result;
+  }
+  
+  // For testing ReLu with forEach(IndexValueConsumer)
+  public Matrix modify(ValueProducer producer) {
+    
+    for(int i = 0; i < a.length; i++) {
+      
+      a[i] = producer.produce(a[i]);
+      
+    }
+    
+    return this;
+  }
+    
+  
+  // For testing ReLu with modify(ValueProducer)
+  public void forEach(IndexValueConsumer consumer) {
+    
+    for(int i = 0; i < a.length; i++) {
+      
+      consumer.consume(i, a[i]);
+    }
   }
   
   
