@@ -5,6 +5,7 @@
 package com.kmne68.neural_network.matrix;
 
 import com.kmne68.matrix.Matrix;
+import java.util.Random;
 import junit.framework.TestCase;
 
 
@@ -14,6 +15,7 @@ import junit.framework.TestCase;
  */
 public class MatrixTest extends TestCase {
   
+  private Random random = new Random();
   
   public MatrixTest(String testName) {
     super(testName);
@@ -149,4 +151,25 @@ public class MatrixTest extends TestCase {
     
   }
   
+  
+  public void testSoftMax() {
+    Matrix m = new Matrix(5, 8, i -> random.nextGaussian());
+    
+    Matrix result = m.softmax();
+    
+    System.out.println("Softmax result: \n" + result);
+    
+    double[] colSums = new double[8];
+    
+    result.forEach((row, col, value) -> {
+      assertTrue(value >= 0 && value <= 1.0);
+      
+      colSums[col] += value;    
+    });
+    
+    for(var sum: colSums) {
+      assertTrue(Math.abs(sum - 1.0) < 0.00001);
+    }
+  }
+    
 }
