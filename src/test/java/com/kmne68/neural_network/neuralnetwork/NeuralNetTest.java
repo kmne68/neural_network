@@ -87,7 +87,7 @@ public class NeuralNetTest extends TestCase {
     System.out.println("result: \n" + result1);
   }
   
-  public void BasicEngineTest() {
+  public void testBasicEngine() {
     
     Engine engine = new Engine();
     
@@ -100,7 +100,7 @@ public class NeuralNetTest extends TestCase {
   }
   
   
-  public void ThreeLayerTest() {
+  public void testThreeLayer() {
     
     int inputSize = 5;
     int layerOneSize = 6;
@@ -108,17 +108,45 @@ public class NeuralNetTest extends TestCase {
     
     Matrix input = new Matrix(inputSize, 1, i -> random.nextGaussian());
     Matrix layerOneWeights = new Matrix(layerOneSize, input.getRows(), i -> random.nextGaussian());
-    Matrix LayerOneBiases = new Matrix(layerOneSize, 1, i -> random.nextGaussian());
+    Matrix layerOneBiases = new Matrix(layerOneSize, 1, i -> random.nextGaussian());
     
     /** The number of rows in layerOneWeights is the number of neurons in layer one.
      * Each produces an output.
      * The second layer is multiplying the output.
      * Every neuron in the second layer needs a number of weights equal to the number of outputs from previous layer.
      * which is equal to the number of neurons in the previous layer.
-     * 
      **/
     Matrix layerTwoWeights = new Matrix(layerTwoSize, layerOneWeights.getRows(), i -> random.nextGaussian());
-    Matrix LayerTwoBiases = new Matrix(layerTwoSize, 1, i -> random.nextGaussian());
+    Matrix layerTwoBiases = new Matrix(layerTwoSize, 1, i -> random.nextGaussian());
+    
+    // The first layer after the input layer
+    var output = input;
+    System.out.println("OUTPUT:\n" + output);
+    
+    // Apply Weights
+    output = layerOneWeights.multiply(output);
+    System.out.println("OUTPUT:\n" + output);
+    
+    // Apply Biases
+    output = output.modify((row, col, value) -> value + layerOneBiases.get(row));
+    System.out.println("OUTPUT AFTER BIASES\n" + output);
+    
+    // Apply ReLu
+    output = output.modify(value -> value > 0 ? value: 0);
+    System.out.println("OUTPUT AFTER RELU\n" + output);
+    
+    // Layer 2
+    // Apply Weights
+    output = layerTwoWeights.multiply(output);
+    System.out.println("OUTPUT:\n" + output);
+    
+    // Apply Biases
+    output = output.modify((row, col, value) -> value + layerTwoBiases.get(row));
+    System.out.println("OUTPUT AFTER BIASES\n" + output);
+    
+    // Apply Softmax to the output (final) layer
+    output = output.softmax();
+    System.out.println("SOFTMAX OUTPUT:\n" + output);
   }
 
 }
