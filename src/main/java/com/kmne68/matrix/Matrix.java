@@ -100,6 +100,17 @@ public class Matrix {
   }
   
   
+  public int getColumns() {
+    
+    return cols;
+  }
+  
+  public int getRows() {
+    
+    return rows;
+  }
+  
+  
   public Matrix modify(RowColumnProducer producer) {
     
     int index = 0;
