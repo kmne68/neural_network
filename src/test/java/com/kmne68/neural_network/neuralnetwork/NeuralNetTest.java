@@ -54,6 +54,21 @@ public class NeuralNetTest extends TestCase {
     System.out.println("biases: \n" + biases);
     System.out.println("result: \n" + result);
   }
+  
+  
+  public void testEngine() {
+    Engine engine = new Engine();
+    
+    engine.add(Transform.DENSE, 8, 5);
+    engine.add(Transform.RELU);
+    engine.add(Transform.DENSE, 5);
+    engine.add(Transform.RELU);
+    engine.add(Transform.DENSE, 4);
+    engine.add(Transform.SOFTMAX);
+    
+    System.out.println("Engine:\n" + engine);
+  }
+  
 
   public void testReLu() {
 
@@ -87,6 +102,7 @@ public class NeuralNetTest extends TestCase {
     System.out.println("result: \n" + result1);
   }
   
+  /*
   public void testBasicEngine() {
     
     Engine engine = new Engine();
@@ -98,7 +114,7 @@ public class NeuralNetTest extends TestCase {
     
     System.out.println("ENGINE: \n" + engine);
   }
-  
+  */
   
   public void testThreeLayer() {
     

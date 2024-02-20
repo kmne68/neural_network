@@ -271,4 +271,14 @@ public class Matrix {
     
     return sb.toString();
   }
+  
+  
+  public String toString(boolean showValues) {
+    if(showValues) {
+      return toString();
+    }
+    else {
+      return rows + "x" + cols;
+    }
+  }
 }
