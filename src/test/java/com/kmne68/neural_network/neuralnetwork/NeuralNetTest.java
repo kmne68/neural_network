@@ -66,7 +66,12 @@ public class NeuralNetTest extends TestCase {
     engine.add(Transform.DENSE, 4);
     engine.add(Transform.SOFTMAX);
     
+    Matrix input = new Matrix(5, 4, i -> random.nextGaussian());
+    
+    Matrix output = engine.runForward(input);
+    
     System.out.println("Engine:\n" + engine);
+    System.out.println("Output:\n" + output);
   }
   
 
