@@ -53,6 +53,11 @@ public class Matrix {
   }
   
   
+  public interface RowColIndexValueConsumer {
+    void consume(int row, int col, int index, double value);
+  }
+  
+  
   public Matrix apply(IndexValueProducer producer) {
     
     Matrix result = new Matrix(rows, cols);
@@ -95,6 +100,18 @@ public class Matrix {
     for(int row = 0; row < rows; row++) {
       for(int col = 0; col < cols; col++) {
         consumer.consume(row, col, a[index++]);
+      }
+    }
+  }
+  
+  
+    public void forEach(RowColIndexValueConsumer consumer) {
+    
+    int index = 0;
+    
+    for(int row = 0; row < rows; row++) {
+      for(int col = 0; col < cols; col++) {
+        consumer.consume(row, col, index, a[index++]);
       }
     }
   }

@@ -48,12 +48,28 @@ public class NeuralNetTest extends TestCase {
     Matrix expected = new Matrix(3, 3, i -> expectedValues[i]);
 
     assertTrue(expected.equals(result));
-
+    
+    System.out.println("================================\n");
     System.out.println("inputs: \n" + input);
     System.out.println("weights: \n" + weights);
     System.out.println("biases: \n" + biases);
     System.out.println("result: \n" + result);
   }
+  
+  
+  public void testCrossEntropy() {
+    double[] expectedValues = { 1, 0, 0, 0, 0, 1, 0, 1, 0 };
+    
+    Matrix expected = new Matrix(3, 3, i -> expectedValues[i]);
+    
+    System.out.println("================================\n");
+    System.out.println("TEST CROSS ENTROPY: \n" + expected + "\n");
+    
+    Matrix actual = new Matrix(3, 3, i -> 0.05 * i * i);
+    
+    System.out.println("ACTUAL: \n" + actual.softmax());
+  }
+  
   
   
   public void testEngine() {
@@ -70,6 +86,7 @@ public class NeuralNetTest extends TestCase {
     
     Matrix output = engine.runForward(input);
     
+    System.out.println("================================\n");
     System.out.println("Engine:\n" + engine);
     System.out.println("Output:\n" + output);
   }
@@ -101,6 +118,7 @@ public class NeuralNetTest extends TestCase {
       }
     });
 
+    System.out.println("================================\n");
     System.out.println("inputs: \n" + input);
     System.out.println("weights: \n" + weights);
     System.out.println("biases: \n" + biases);
@@ -140,6 +158,7 @@ public class NeuralNetTest extends TestCase {
     Matrix layerTwoWeights = new Matrix(layerTwoSize, layerOneWeights.getRows(), i -> random.nextGaussian());
     Matrix layerTwoBiases = new Matrix(layerTwoSize, 1, i -> random.nextGaussian());
     
+    System.out.println("================================\n");
     // The first layer after the input layer
     var output = input;
     System.out.println("OUTPUT:\n" + output);
