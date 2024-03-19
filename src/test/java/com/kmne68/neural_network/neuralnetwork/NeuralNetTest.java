@@ -6,6 +6,7 @@ package com.kmne68.neural_network.neuralnetwork;
 
 import com.kmne68.matrix.Matrix;
 import com.kmne68.neural_network.Engine;
+import com.kmne68.neural_network.LossFunction;
 import com.kmne68.neural_network.Transform;
 import java.util.Random;
 import junit.framework.TestCase;
@@ -63,11 +64,24 @@ public class NeuralNetTest extends TestCase {
     Matrix expected = new Matrix(3, 3, i -> expectedValues[i]);
     
     System.out.println("================================\n");
-    System.out.println("TEST CROSS ENTROPY: \n" + expected + "\n");
+    System.out.println("TEST CROSS ENTROPY: \n" + expected);
     
-    Matrix actual = new Matrix(3, 3, i -> 0.05 * i * i);
+    Matrix actual = new Matrix(3, 3, i -> 0.05 * i * i).softmax();
     
-    System.out.println("ACTUAL: \n" + actual.softmax());
+    System.out.println("ACTUAL: \n" + actual);
+    
+    Matrix result = LossFunction.crossEntropy(expected, actual);
+    
+    System.out.println("LOSS FUNCTION RESULT: \n" + result);
+    
+    actual.forEach((row, col, index, value)->{
+      double expectedValue = expected.get(index);
+      double loss = result.get(col);
+      
+      if(expectedValue > 0.9) {
+        assertTrue(Math.abs(Math.log(value) + loss) < 0.001);
+      }
+    });
   }
   
   
