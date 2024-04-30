@@ -21,6 +21,24 @@ public class Matrix {
   
   private double[] a;
   
+  
+    public Matrix(int rows, int cols) {
+    
+    this.rows = rows;
+    this.cols = cols;
+    
+    a = new double[rows * cols];
+  }
+  
+  
+  public Matrix(int rows, int cols, Producer producer) {
+    this(rows, cols);
+    
+    for(int i = 0; i < a.length; i++) {
+      a[i] = producer.produce(i);
+    }
+  }
+  
   public interface Producer {
     double produce(int index);
   }
@@ -250,24 +268,11 @@ public class Matrix {
   }
   
   
+
   
   
-  
-  public Matrix(int rows, int cols) {
-    
-    this.rows = rows;
-    this.cols = cols;
-    
-    a = new double[rows * cols];
-  }
-  
-  
-  public Matrix(int rows, int cols, Producer producer) {
-    this(rows, cols);
-    
-    for(int i = 0; i < a.length; i++) {
-      a[i] = producer.produce(i);
-    }
+  public void set(int row, int column, double value) {
+    a[row * cols + column] = value;
   }
   
     

@@ -5,6 +5,7 @@
 package com.kmne68.neural_network.neuralnetwork;
 
 import com.kmne68.matrix.Matrix;
+import com.kmne68.neural_network.Approximator;
 import com.kmne68.neural_network.Engine;
 import com.kmne68.neural_network.LossFunction;
 import com.kmne68.neural_network.Transform;
@@ -18,6 +19,32 @@ import junit.framework.TestCase;
 public class NeuralNetTest extends TestCase {
 
   private Random random = new Random();
+  
+  
+  public void testApproximator() {
+    
+    final int ROWS = 4;
+    final int COLUMNS = 5;
+    
+    Matrix input = new Matrix(ROWS, COLUMNS, i -> random.nextGaussian());
+    
+    Matrix expected = new Matrix(ROWS, COLUMNS, i -> 0);
+    
+    for(int column = 0; column < COLUMNS; column++) {
+      int randomRow = random.nextInt(ROWS);
+      
+      expected.set(randomRow, column, 1);
+    }
+    
+    Approximator.gradient(input, null);
+    
+    System.out.println("\n***** APPROXIMATOR *****");
+    System.out.println();
+    System.out.println(input);
+    System.out.println("\n***** EXPECTED *****");
+    System.out.println(expected);
+    
+  }
 
   public NeuralNetTest(String testName) {
     super(testName);
