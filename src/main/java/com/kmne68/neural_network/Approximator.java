@@ -17,15 +17,25 @@ public class Approximator {
   
   
   public static Matrix gradient(Matrix input, Function<Matrix, Matrix> transform) {
+  
+    Matrix loss1 = transform.apply(input);
+    
+    assert loss1.getColumns() == input.getColumns(): "Input/loss columns not equal.";
+    assert loss1.getRows() == 1: "Transform does not return just one row.";
+    
+    
+    System.out.println("\n***** APPROXIMATOR INPUT *****");
+    System.out.println(input);
+    
+    
+    System.out.println("\n***** APPROXIMATOR LOSS1 *****");
+    System.out.println(loss1);
     
     System.out.println("\n***** APPROXIMATOR GRADIENT METHOD *****");
     
     input.forEach((row, col, index, value) -> {
-      System.out.printf("%12.5f", value);
-      
-      if(col == input.getColumns() - 1) {
-        System.out.println("");
-      }
+
+
     });
     
     return null;

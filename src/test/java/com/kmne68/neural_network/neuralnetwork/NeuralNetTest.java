@@ -26,7 +26,7 @@ public class NeuralNetTest extends TestCase {
     final int ROWS = 4;
     final int COLUMNS = 5;
     
-    Matrix input = new Matrix(ROWS, COLUMNS, i -> random.nextGaussian());
+    Matrix input = new Matrix(ROWS, COLUMNS, i -> random.nextGaussian()).softmax();
     
     Matrix expected = new Matrix(ROWS, COLUMNS, i -> 0);
     
@@ -36,7 +36,10 @@ public class NeuralNetTest extends TestCase {
       expected.set(randomRow, column, 1);
     }
     
-    Approximator.gradient(input, null);
+    // evaluate a loss for every column in the input
+    Approximator.gradient(input, in->{
+      return LossFunction.crossEntropy(expected, in);
+    });
     
     System.out.println("\n***** APPROXIMATOR *****");
     System.out.println();
