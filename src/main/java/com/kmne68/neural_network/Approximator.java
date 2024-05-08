@@ -17,12 +17,15 @@ public class Approximator {
   
   
   public static Matrix gradient(Matrix input, Function<Matrix, Matrix> transform) {
+    
+    final double INC = 0.000001;
   
     Matrix loss1 = transform.apply(input);
     
     assert loss1.getColumns() == input.getColumns(): "Input/loss columns not equal.";
     assert loss1.getRows() == 1: "Transform does not return just one row.";
     
+    Matrix result = new Matrix(input.getRows(), input.getColumns(), i -> 0);
     
     System.out.println("\n***** APPROXIMATOR INPUT *****");
     System.out.println(input);
@@ -34,10 +37,15 @@ public class Approximator {
     System.out.println("\n***** APPROXIMATOR GRADIENT METHOD *****");
     
     input.forEach((row, col, index, value) -> {
-
-
+      Matrix incremented = input.addIncrement(row, col, INC);
+      
+      Matrix loss2 = transform.apply(incremented);
+      
+      double rate = (loss2.get(col) - loss1.get(col)) / INC;
+      
+      result.set(row, col, rate);
     });
     
-    return null;
+    return result;
   }
 }

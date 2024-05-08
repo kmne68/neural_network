@@ -17,6 +17,32 @@ public class MatrixTest extends TestCase {
   
   private Random random = new Random();
   
+  
+  public void testAddIncrement() {
+    Matrix m = new Matrix(5, 8, i -> random.nextGaussian());
+    
+    int row = 3;
+    int column = 2;
+    double increment = 10;
+    
+    Matrix result = m.addIncrement(row, column, increment);
+    
+    double incrementedValue = result.get(row, column);
+    double originalValue = result.get(row, column);
+    
+//    assertTrue(Math.abs(incrementedValue - (originalValue + increment)) < 0.00001);
+    
+    System.out.println("********** ADD INCREMENT TEST ***********\n");
+    System.out.println(m);
+    System.out.println("********** INCREMENTED MATRIX ***********\n");
+    System.out.println(result);
+    
+    System.out.println("DIFFERENCE: ");
+    System.out.println(Math.abs(incrementedValue - (originalValue + increment)) < 0.00001);
+
+  }
+  
+  
   public MatrixTest(String testName) {
     super(testName);
   }

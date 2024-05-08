@@ -268,11 +268,28 @@ public class Matrix {
   }
   
   
+  public double get(int row, int column) {
+    return a[row * cols + column];
+  }
 
   
   
   public void set(int row, int column, double value) {
     a[row * cols + column] = value;
+  }
+  
+  
+  public Matrix addIncrement(int row, int column, double increment) {
+    
+    Matrix result = apply((index, value) -> a[index]);
+    
+    double originalValue = get(row, column);
+    
+    double newValue = originalValue + increment;
+    
+    result.set(row, column, newValue);
+    
+    return result;
   }
   
     

@@ -37,7 +37,7 @@ public class NeuralNetTest extends TestCase {
     }
     
     // evaluate a loss for every column in the input
-    Approximator.gradient(input, in->{
+    Matrix result = Approximator.gradient(input, in->{
       return LossFunction.crossEntropy(expected, in);
     });
     
@@ -46,7 +46,9 @@ public class NeuralNetTest extends TestCase {
     System.out.println(input);
     System.out.println("\n***** EXPECTED *****");
     System.out.println(expected);
-    
+   
+    System.out.println("***** RESULT *****");
+    System.out.println(result);
   }
 
   public NeuralNetTest(String testName) {
