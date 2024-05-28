@@ -41,6 +41,18 @@ public class NeuralNetTest extends TestCase {
       return LossFunction.crossEntropy(expected, in);
     });
     
+    input.forEach((index, value) -> { 
+      double resultValue = result.get(index);
+      double expectedValue = expected.get(index);
+      
+      if(expectedValue < 0.001) {
+        assertTrue(Math.abs(resultValue) < 0.01);
+      }
+      else {
+        assertTrue(Math.abs(resultValue + 1.0/value) < 0.01);
+      }
+    });
+    
     System.out.println("\n***** APPROXIMATOR *****");
     System.out.println();
     System.out.println(input);
