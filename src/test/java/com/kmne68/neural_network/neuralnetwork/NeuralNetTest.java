@@ -62,7 +62,55 @@ public class NeuralNetTest extends TestCase {
     System.out.println("***** RESULT *****");
     System.out.println(result);
   }
-
+  
+  
+    public void testSoftmaxCrossEntropyGradient() {
+    
+    final int ROWS = 4;
+    final int COLUMNS = 5;
+    
+    // A random matrix that acts as an input to the approximator
+    Matrix input = new Matrix(ROWS, COLUMNS, i -> random.nextGaussian());
+    
+    Matrix expected = new Matrix(ROWS, COLUMNS, i -> 0);
+    
+    for(int column = 0; column < COLUMNS; column++) {
+      int randomRow = random.nextInt(ROWS);
+      
+      expected.set(randomRow, column, 1);
+    }
+    
+    Matrix softmaxOutput = input.softmax();
+    
+    // evaluate a loss for every column in the input
+    Matrix result = Approximator.gradient(input, in->{
+      return LossFunction.crossEntropy(expected, in.softmax());
+    });
+    
+    System.out.println("Value\t\t\t  Softmax Value\t\t\t Expected Value");
+    
+    result.forEach((index, value) -> {
+      double softmaxValue = softmaxOutput.get(index);
+      double expectedValue = expected.get(index);
+      
+      assertTrue(Math.abs(value - (softmaxValue - expectedValue)) < 0.01);
+    
+      System.out.println(value + "\t" + softmaxValue + "\t" + expectedValue);
+    });
+    
+    
+    
+    System.out.println("\n***** APPROXIMATOR *****");
+    System.out.println();
+    System.out.println(input);
+    System.out.println("\n***** EXPECTED *****");
+    System.out.println(expected);
+   
+    System.out.println("***** RESULT *****");
+    System.out.println(result);
+  }
+  
+  
   public NeuralNetTest(String testName) {
     super(testName);
   }
