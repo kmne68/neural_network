@@ -25,6 +25,12 @@ public class Calculus {
   }
   
   
+  public static double functionProduct(double x) {
+    
+    return function2(function1(x));
+  }
+  
+  
   public static double differentiate(DoubleFunction<Double> function, double x) {
     
     double output1 = function.apply(x);
@@ -37,11 +43,26 @@ public class Calculus {
   
   public static void main(String[] args) {
     
+    double x = 3.64;
+    double y = function1(x);
+    double z = function2(y);
+    
+    System.out.println("x: " + x + "\ny: " + y + "\nz: " + z + "\nfunction2(function1): " + functionProduct(x));
+    
+    double dy_dx = differentiate(Calculus::function1, x);
+    double dz_dy = differentiate(Calculus::function2, y);
+    double dz_dx = differentiate(Calculus::functionProduct, x);
+    
+    System.out.println("dy_dx: " + dy_dx);
+    System.out.println("dz_dy: " + dz_dy);
+    System.out.println("dz_dx: " + dz_dx);
+    
+    
+    /* 
     System.out.println("FUNCTION 1\n");
     for(double x = -2; x <  2; x += 0.1) {
       double gradient1 = differentiate(Calculus::function1, x);
       System.out.printf("%.2f\t%.2f\n", x, gradient1);
-      
     }
     
     
@@ -50,6 +71,7 @@ public class Calculus {
       double gradient2 = differentiate(Calculus::function2, x);
       System.out.printf("%.2f\t%.2f\n", x, gradient2);
     }
+    */
   }
         
   
