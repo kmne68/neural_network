@@ -18,6 +18,22 @@ public class MatrixTest extends TestCase {
   private Random random = new Random();
   
   
+  public void testTranspose() {
+    
+    Matrix m = new Matrix(2, 3, i -> i);
+    
+    Matrix result = m.transpose();
+    
+    double[] expectedValues = { 0, 3, 1, 4, 2, 5 };
+    Matrix expected = new Matrix(3, 2, i -> expectedValues[i]);
+    
+    System.out.println("Matrix m:\n" + m);
+    System.out.println("Transpose(m):\n" + result);
+    
+    assertTrue(expected.equals(result));
+  }
+  
+  
   public void testAddIncrement() {
     Matrix m = new Matrix(5, 8, i -> random.nextGaussian());
     

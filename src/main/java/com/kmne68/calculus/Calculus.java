@@ -25,6 +25,18 @@ public class Calculus {
   }
   
   
+  public static double function3(double y1, double y2) {
+    
+    return y1 * y2 + 4.7 * y1;
+  }
+  
+  
+  public static double function4(double x) {
+    
+    return function1(x) * function2(x) + 4.7 * function1(x);
+  }
+  
+  
   public static double functionProduct(double x) {
     
     return function2(function1(x));
@@ -45,7 +57,10 @@ public class Calculus {
     
     double x = 3.64;
     double y = function1(x);
+    double y1 = function1(x);
+    double y2 = function2(x);
     double z = function2(y);
+    double z2 = function3(y1, y2);
     
     System.out.println("x: " + x + "\ny: " + y + "\nz: " + z + "\nfunction2(function1): " + functionProduct(x));
     
@@ -53,9 +68,20 @@ public class Calculus {
     double dz_dy = differentiate(Calculus::function2, y);
     double dz_dx = differentiate(Calculus::functionProduct, x);
     
+    double dy1_dx = differentiate(Calculus::function1, x);
+    double dy2_dx = differentiate(Calculus::function2, x);
+    double dz2_dy1 = differentiate(w -> function3(w, y2), y1);
+    double dz2_dy2 = differentiate(w -> function3(y1, w), y2);
+
+    double dz2_dxCalculated = (dz2_dy1 * dy1_dx) + (dz2_dy2 * dy2_dx);
+    double dz2_dxApproximated = differentiate(Calculus::function4, x);
+    
     System.out.println("dy_dx: " + dy_dx);
     System.out.println("dz_dy: " + dz_dy);
     System.out.println("dz_dx: " + dz_dx);
+    
+    System.out.println("dz2_dxCalculated: " + dz2_dxCalculated);
+    System.out.println("dz2_dxApproximated: " + dz2_dxApproximated);
     
     
     /* 

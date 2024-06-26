@@ -292,6 +292,20 @@ public class Matrix {
     return result;
   }
   
+  
+  public Matrix transpose() {
+    
+    Matrix result = new Matrix(cols, rows);
+    
+    for(int i = 0; i < a.length; ++i) {
+      int row = i / cols;
+      int col = i % cols;
+      
+      result.a[col * rows + row] = a[i];
+    }
+    
+    return result;
+  }
     
   public String toString() {
     StringBuilder sb = new StringBuilder();
