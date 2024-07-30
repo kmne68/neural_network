@@ -61,7 +61,7 @@ public class NeuralNetTest extends TestCase {
     System.out.println(result);
   }
 
-  public void testBackpropWeights() {
+  public void testBackprop() {
 
     interface NeuralNet {
 
@@ -87,7 +87,17 @@ public class NeuralNetTest extends TestCase {
       expected.set(randomRow, column, 1);
     }
     
-    NeuralNet neuralNet = m -> weights.multiply(m).modify((row, col, value) -> value + biases.get(row)).softmax();
+    NeuralNet neuralNet = m -> {
+      
+      Matrix out = m.apply((index, value) -> value > 0 ? value : 0);
+      out = weights.multiply(out);                           // weights
+      out.modify((row, col, value) -> value + biases.get(row));   // biases
+      out = out.softmax();                                        // Softmax activation function
+      
+      return out;
+    
+    };
+    
     Matrix softmaxOutput = neuralNet.apply(input);
     
     // evaluate a loss for every column in the input
@@ -98,6 +108,8 @@ public class NeuralNetTest extends TestCase {
 
     Matrix calculatedResult = softmaxOutput.apply((index, value) -> value - expected.get(index));
     calculatedResult = weights.transpose().multiply(calculatedResult);
+    calculatedResult = calculatedResult.apply((index, value) -> input.get(index) > 0 ? value : 0);
+    
 
     assertTrue(approximatedResult.equals(calculatedResult));
 
