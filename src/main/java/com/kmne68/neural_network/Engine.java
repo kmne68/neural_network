@@ -51,6 +51,31 @@ public class Engine {
   }
   
   
+  public Matrix runBackward(Matrix error) {
+    
+    var transformsIt = transforms.descendingIterator();
+    while(transformsIt.hasNext()) {
+      
+      Transform transform = transformsIt.next();
+      
+      switch(transform) {
+        case DENSE:
+          break;
+        case RELU:
+          break;
+        case SOFTMAX:
+          break;
+        default:
+          throw new UnsupportedOperationException("Not Implemented");
+      }
+      
+      System.out.println(transform);
+    }
+    
+    return null;
+  }
+  
+  
     public void add(Transform transform, double...params) {
     
     Random random = new Random();

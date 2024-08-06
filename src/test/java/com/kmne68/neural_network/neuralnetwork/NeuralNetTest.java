@@ -86,20 +86,20 @@ public class NeuralNetTest extends TestCase {
 
       expected.set(randomRow, column, 1);
     }
-    
+
     NeuralNet neuralNet = m -> {
-      
+
       Matrix out = m.apply((index, value) -> value > 0 ? value : 0);
       out = weights.multiply(out);                           // weights
       out.modify((row, col, value) -> value + biases.get(row));   // biases
       out = out.softmax();                                        // Softmax activation function
-      
+
       return out;
-    
+
     };
-    
+
     Matrix softmaxOutput = neuralNet.apply(input);
-    
+
     // evaluate a loss for every column in the input
     Matrix approximatedResult = Approximator.gradient(input, in -> {
       Matrix out = neuralNet.apply(in);
@@ -109,7 +109,6 @@ public class NeuralNetTest extends TestCase {
     Matrix calculatedResult = softmaxOutput.apply((index, value) -> value - expected.get(index));
     calculatedResult = weights.transpose().multiply(calculatedResult);
     calculatedResult = calculatedResult.apply((index, value) -> input.get(index) > 0 ? value : 0);
-    
 
     assertTrue(approximatedResult.equals(calculatedResult));
 
@@ -257,9 +256,13 @@ public class NeuralNetTest extends TestCase {
 
     Matrix output = engine.runForward(input);
 
-    System.out.println("================================\n");
+    System.out.println("=============== FORWARD =================\n");
     System.out.println("Engine:\n" + engine);
     System.out.println("Output:\n" + output);
+
+    System.out.println("********** RUN BACKWARD ***********");
+    engine.runBackward(null);
+
   }
 
   public void testReLu() {
