@@ -23,11 +23,14 @@ public class Engine {
   }
   
   
-  public Matrix runForward(Matrix input) {
+  public BatchResult runForward(Matrix input) {
     
+    BatchResult batchResult = new BatchResult();
     Matrix output = input;
   
     int denseIndex = 0;
+    
+    batchResult.addIo(output);
 
     for(var t: transforms) {
       if(t == Transform.DENSE) {
@@ -45,13 +48,15 @@ public class Engine {
       else if(t == Transform.SOFTMAX) {
         output = output.softmax();
       }
+      
+      batchResult.addIo(output);
     }
     
-    return output;
+    return batchResult;
   }
   
   
-  public Matrix runBackward(Matrix error) {
+  public Matrix runBackward(BatchResult batchResult, Matrix expected) {
     
     var transformsIt = transforms.descendingIterator();
     while(transformsIt.hasNext()) {

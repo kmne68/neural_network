@@ -6,9 +6,11 @@ package com.kmne68.neural_network.neuralnetwork;
 
 import com.kmne68.matrix.Matrix;
 import com.kmne68.neural_network.Approximator;
+import com.kmne68.neural_network.BatchResult;
 import com.kmne68.neural_network.Engine;
 import com.kmne68.neural_network.LossFunction;
 import com.kmne68.neural_network.Transform;
+import com.kmne68.neural_network.Utils;
 import java.util.Random;
 import junit.framework.TestCase;
 
@@ -243,6 +245,11 @@ public class NeuralNetTest extends TestCase {
   }
 
   public void testEngine() {
+    
+    int inputRows = 5;
+    int cols = 6;
+    int outputRows = 4;
+    
     Engine engine = new Engine();
 
     engine.add(Transform.DENSE, 8, 5);
@@ -252,16 +259,16 @@ public class NeuralNetTest extends TestCase {
     engine.add(Transform.DENSE, 4);
     engine.add(Transform.SOFTMAX);
 
-    Matrix input = new Matrix(5, 4, i -> random.nextGaussian());
-
-    Matrix output = engine.runForward(input);
-
+    Matrix input = Utils.generateInputMatrix(inputRows, cols);
+    Matrix expected = Utils.generateExpectedMatrix(outputRows, cols);
+    
+    BatchResult batchResult = engine.runForward(input);
+    
     System.out.println("=============== FORWARD =================\n");
     System.out.println("Engine:\n" + engine);
-    System.out.println("Output:\n" + output);
 
     System.out.println("********** RUN BACKWARD ***********");
-    engine.runBackward(null);
+    engine.runBackward(batchResult, expected);
 
   }
 
