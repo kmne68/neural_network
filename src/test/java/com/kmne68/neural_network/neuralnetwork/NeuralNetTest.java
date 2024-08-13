@@ -8,7 +8,7 @@ import com.kmne68.matrix.Matrix;
 import com.kmne68.neural_network.Approximator;
 import com.kmne68.neural_network.BatchResult;
 import com.kmne68.neural_network.Engine;
-import com.kmne68.neural_network.LossFunction;
+import com.kmne68.neural_network.LossFunctions;
 import com.kmne68.neural_network.Transform;
 import com.kmne68.neural_network.Utils;
 import java.util.Random;
@@ -39,7 +39,7 @@ public class NeuralNetTest extends TestCase {
 
     // evaluate a loss for every column in the input
     Matrix result = Approximator.gradient(input, in -> {
-      return LossFunction.crossEntropy(expected, in);
+      return LossFunctions.crossEntropy(expected, in);
     });
 
     input.forEach((index, value) -> {
@@ -105,7 +105,7 @@ public class NeuralNetTest extends TestCase {
     // evaluate a loss for every column in the input
     Matrix approximatedResult = Approximator.gradient(input, in -> {
       Matrix out = neuralNet.apply(in);
-      return LossFunction.crossEntropy(expected, out);
+      return LossFunctions.crossEntropy(expected, out);
     });
 
     Matrix calculatedResult = softmaxOutput.apply((index, value) -> value - expected.get(index));
@@ -135,6 +135,36 @@ public class NeuralNetTest extends TestCase {
     System.out.println("***** RESULT *****");
     System.out.println(calculatedResult);
   }
+  
+  
+    public void testEngine() {
+    
+    int inputRows = 5;
+    int cols = 6;
+    int outputRows = 4;
+    
+    Engine engine = new Engine();
+
+    engine.add(Transform.DENSE, 8, 5);
+    engine.add(Transform.RELU);
+    engine.add(Transform.DENSE, 5);
+    engine.add(Transform.RELU);
+    engine.add(Transform.DENSE, 4);
+    engine.add(Transform.SOFTMAX);
+
+    Matrix input = Utils.generateInputMatrix(inputRows, cols);
+    Matrix expected = Utils.generateExpectedMatrix(outputRows, cols);
+    
+    BatchResult batchResult = engine.runForward(input);
+    
+    System.out.println("=============== FORWARD =================\n");
+    System.out.println("Engine:\n" + engine);
+
+    System.out.println("********** RUN BACKWARD ***********");
+    engine.runBackward(batchResult, expected);
+
+  }
+  
 
   public void testSoftmaxCrossEntropyGradient() {
 
@@ -156,7 +186,7 @@ public class NeuralNetTest extends TestCase {
 
     // evaluate a loss for every column in the input
     Matrix result = Approximator.gradient(input, in -> {
-      return LossFunction.crossEntropy(expected, in.softmax());
+      return LossFunctions.crossEntropy(expected, in.softmax());
     });
 
     System.out.println("Value\t\t\t  Softmax Value\t\t\t Expected Value");
@@ -230,7 +260,7 @@ public class NeuralNetTest extends TestCase {
 
     System.out.println("ACTUAL: \n" + actual);
 
-    Matrix result = LossFunction.crossEntropy(expected, actual);
+    Matrix result = LossFunctions.crossEntropy(expected, actual);
 
     System.out.println("LOSS FUNCTION RESULT: \n" + result);
 
@@ -244,33 +274,7 @@ public class NeuralNetTest extends TestCase {
     });
   }
 
-  public void testEngine() {
-    
-    int inputRows = 5;
-    int cols = 6;
-    int outputRows = 4;
-    
-    Engine engine = new Engine();
 
-    engine.add(Transform.DENSE, 8, 5);
-    engine.add(Transform.RELU);
-    engine.add(Transform.DENSE, 5);
-    engine.add(Transform.RELU);
-    engine.add(Transform.DENSE, 4);
-    engine.add(Transform.SOFTMAX);
-
-    Matrix input = Utils.generateInputMatrix(inputRows, cols);
-    Matrix expected = Utils.generateExpectedMatrix(outputRows, cols);
-    
-    BatchResult batchResult = engine.runForward(input);
-    
-    System.out.println("=============== FORWARD =================\n");
-    System.out.println("Engine:\n" + engine);
-
-    System.out.println("********** RUN BACKWARD ***********");
-    engine.runBackward(batchResult, expected);
-
-  }
 
   public void testReLu() {
 

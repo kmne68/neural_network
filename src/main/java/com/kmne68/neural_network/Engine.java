@@ -18,6 +18,8 @@ public class Engine {
   private LinkedList<Matrix> weights = new LinkedList<>();
   private LinkedList<Matrix> biases = new LinkedList<>();
   
+  private LossFunction lossFunction = LossFunction.CROSS_ENTROPY;
+  
   public void add(Transform transform) {
     transforms.add(transform);
   }
@@ -59,6 +61,10 @@ public class Engine {
   public Matrix runBackward(BatchResult batchResult, Matrix expected) {
     
     var transformsIt = transforms.descendingIterator();
+    
+    if(lossFunction != LossFunction.CROSS_ENTROPY || transforms.getLast() != Transform.SOFTMAX) {
+      throw new UnsupportedOperationException("Loss function must be cross entropy and last transform must be softmax");
+    }
     while(transformsIt.hasNext()) {
       
       Transform transform = transformsIt.next();
