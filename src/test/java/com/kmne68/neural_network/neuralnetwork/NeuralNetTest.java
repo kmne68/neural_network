@@ -141,19 +141,28 @@ public class NeuralNetTest extends TestCase {
     
     int inputRows = 5;
     int cols = 6;
-    int outputRows = 4;
+    int outputRows = 5;
     
     Engine engine = new Engine();
 
+    /* Transforms for use in runForward
     engine.add(Transform.DENSE, 8, 5);
     engine.add(Transform.RELU);
     engine.add(Transform.DENSE, 5);
     engine.add(Transform.RELU);
     engine.add(Transform.DENSE, 4);
+    */
     engine.add(Transform.SOFTMAX);
+    engine.setStoreInputError(true);
 
     Matrix input = Utils.generateInputMatrix(inputRows, cols);
     Matrix expected = Utils.generateExpectedMatrix(outputRows, cols);
+    
+    Matrix approximatedError = Approximator.gradient(input, in -> {
+      BatchResult batchResult = engine.runForward(in);
+      return LossFunctions.crossEntropy(expected, batchResult.getOutput());
+    });
+    
     
     BatchResult batchResult = engine.runForward(input);
     
@@ -162,7 +171,14 @@ public class NeuralNetTest extends TestCase {
 
     System.out.println("********** RUN BACKWARD ***********");
     engine.runBackward(batchResult, expected);
+    Matrix calculatedError = batchResult.getInputError();
 
+    System.out.println("CALUCULATED ERROR:\n" + calculatedError);
+    System.out.println("APPROXIMATED ERROR:\n" + approximatedError);
+    
+    assertTrue(calculatedError.equals(approximatedError));
+    
+    
   }
   
 
@@ -189,7 +205,7 @@ public class NeuralNetTest extends TestCase {
       return LossFunctions.crossEntropy(expected, in.softmax());
     });
 
-    System.out.println("Value\t\t\t  Softmax Value\t\t\t Expected Value");
+    System.out.println("VALUE\t\t\t  SOFTMAX VALUE\t\t\t EXPECTED VALUE");
 
     result.forEach((index, value) -> {
       double softmaxValue = softmaxOutput.get(index);

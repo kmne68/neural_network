@@ -21,6 +21,12 @@ public class BatchResult {
     return io;
   }
   
+  
+  public Matrix getOutput() {
+    return io.getLast();
+  }
+  
+  
   public void addIo(Matrix m) {
     io.add(m);
   }
