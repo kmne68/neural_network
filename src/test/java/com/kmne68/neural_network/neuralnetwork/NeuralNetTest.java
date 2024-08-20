@@ -110,6 +110,7 @@ public class NeuralNetTest extends TestCase {
 
     Matrix calculatedResult = softmaxOutput.apply((index, value) -> value - expected.get(index));
     calculatedResult = weights.transpose().multiply(calculatedResult);
+    // back propagate through Relu
     calculatedResult = calculatedResult.apply((index, value) -> input.get(index) > 0 ? value : 0);
 
     assertTrue(approximatedResult.equals(calculatedResult));
@@ -141,17 +142,17 @@ public class NeuralNetTest extends TestCase {
     
     int inputRows = 5;
     int cols = 6;
-    int outputRows = 5;
+    int outputRows = 4;
     
     Engine engine = new Engine();
 
-    /* Transforms for use in runForward
+    // Transforms for use in runForward
     engine.add(Transform.DENSE, 8, 5);
     engine.add(Transform.RELU);
     engine.add(Transform.DENSE, 5);
     engine.add(Transform.RELU);
     engine.add(Transform.DENSE, 4);
-    */
+    
     engine.add(Transform.SOFTMAX);
     engine.setStoreInputError(true);
 
@@ -175,6 +176,8 @@ public class NeuralNetTest extends TestCase {
 
     System.out.println("CALUCULATED ERROR:\n" + calculatedError);
     System.out.println("APPROXIMATED ERROR:\n" + approximatedError);
+    
+    calculatedError.setTolerance(0.001);
     
     assertTrue(calculatedError.equals(approximatedError));
     

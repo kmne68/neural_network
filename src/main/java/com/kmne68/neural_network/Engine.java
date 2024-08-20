@@ -13,106 +13,109 @@ import java.util.Random;
  * @author kemery
  */
 public class Engine {
-  
+
   private LinkedList<Transform> transforms = new LinkedList<>();
   private LinkedList<Matrix> weights = new LinkedList<>();
   private LinkedList<Matrix> biases = new LinkedList<>();
-  
+
   private LossFunction lossFunction = LossFunction.CROSS_ENTROPY;
   private boolean storeInputError = false;
-  
+
   public void add(Transform transform) {
     transforms.add(transform);
   }
-  
-  
+
   public BatchResult runForward(Matrix input) {
-    
+
     BatchResult batchResult = new BatchResult();
     Matrix output = input;
-  
+
     int denseIndex = 0;
-    
+
     batchResult.addIo(output);
 
-    for(var t: transforms) {
-      if(t == Transform.DENSE) {
-        
+    for (var t : transforms) {
+      if (t == Transform.DENSE) {
+
         Matrix weight = weights.get(denseIndex);
         Matrix bias = biases.get(denseIndex);
-        
+
         output = weight.multiply(output).modify((row, col, value) -> value + bias.get(row));
-                
+
         ++denseIndex;
-      }
-      else if(t == Transform.RELU) {
+      } else if (t == Transform.RELU) {
         output = output.modify(value -> value > 0 ? value : 0);
-      }
-      else if(t == Transform.SOFTMAX) {
+      } else if (t == Transform.SOFTMAX) {
         output = output.softmax();
       }
-      
+
       batchResult.addIo(output);
     }
-    
+
     return batchResult;
   }
-  
-  
+
   public void runBackward(BatchResult batchResult, Matrix expected) {
-    
+
     var transformsIt = transforms.descendingIterator();
-    
-    if(lossFunction != LossFunction.CROSS_ENTROPY || transforms.getLast() != Transform.SOFTMAX) {
+
+    if (lossFunction != LossFunction.CROSS_ENTROPY || transforms.getLast() != Transform.SOFTMAX) {
       throw new UnsupportedOperationException("Loss function must be cross entropy and last transform must be softmax");
     }
-    
+
     var ioIterator = batchResult.getIo().descendingIterator();
+    var weightIterator = weights.descendingIterator();
     Matrix softmaxOutput = ioIterator.next();
     Matrix error = softmaxOutput.apply((index, value) -> value - expected.get(index));
 
-    
-    while(transformsIt.hasNext()) {
-      
+    while (transformsIt.hasNext()) {
+
       Transform transform = transformsIt.next();
-      
-      switch(transform) {
+
+      Matrix input = ioIterator.next();
+
+      switch (transform) {
         case DENSE:
+          Matrix weight = weightIterator.next();
+
+          if (weightIterator.hasNext() || storeInputError) {
+            error = weight.transpose().multiply(error);
+          }
           break;
         case RELU:
+          error = error.apply((index, value) -> input.get(index) > 0 ? value : 0);
           break;
         case SOFTMAX:
           break;
         default:
           throw new UnsupportedOperationException("Not Implemented");
       }
-      
+
       System.out.println(transform);
     }
     if (storeInputError) {
       batchResult.setInputError(error);
     }
   }
-  
-  
-    public void add(Transform transform, double...params) {
-    
+
+  public void add(Transform transform, double... params) {
+
     Random random = new Random();
-    
-    if(transform == Transform.DENSE) {
-      int numberOfNeurons = (int)params[0];      
-      int weightsPerNeuron = weights.size() == 0 ? (int)params[1] : weights.getLast().getRows();
-      
+
+    if (transform == Transform.DENSE) {
+      int numberOfNeurons = (int) params[0];
+      int weightsPerNeuron = weights.size() == 0 ? (int) params[1] : weights.getLast().getRows();
+
       Matrix weight = new Matrix(numberOfNeurons, weightsPerNeuron, i -> random.nextGaussian());
       Matrix bias = new Matrix(numberOfNeurons, 1, i -> random.nextGaussian());
-      
+
       weights.add(weight);
       biases.add(bias);
     }
     transforms.add(transform);
   }
-  
-/*  
+
+  /*  
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
@@ -123,31 +126,28 @@ public class Engine {
     
     return sb.toString();
   }
-  */
-
-    
+   */
   public void setStoreInputError(boolean storeInputError) {
     this.storeInputError = storeInputError;
   }
-  
-  
+
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    
+
     int weightIndex = 0;
-    for(var t: transforms) {
-      
+    for (var t : transforms) {
+
       sb.append(t);
-      
-      if(t == Transform.DENSE) {
+
+      if (t == Transform.DENSE) {
         sb.append(" ").append(weights.get(weightIndex).toString(false));
-        
+
         weightIndex++;
       }
       sb.append("\n");
     }
-    
+
     return sb.toString();
   }
-}   
+}

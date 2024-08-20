@@ -14,7 +14,7 @@ public class Matrix {
   
   
   private static final String NUMBER_FORMAT = "%+12.5f";
-  private static final double TOLERANCE = 0.000001;
+  private double tolerance = 0.000001;
   
   private int rows;
   private int cols;
@@ -259,7 +259,7 @@ public class Matrix {
     }
     
     for(int i = 0; i < a.length; i++) {
-      if(Math.abs(a[i] - other.a[i]) > TOLERANCE) {
+      if(Math.abs(a[i] - other.a[i]) > tolerance) {
         return false;
       }
     }
@@ -334,4 +334,11 @@ public class Matrix {
       return rows + "x" + cols;
     }
   }
+
+  public void setTolerance(double tolerance) {
+    this.tolerance = tolerance;
+  }
+  
+  
+  
 }
