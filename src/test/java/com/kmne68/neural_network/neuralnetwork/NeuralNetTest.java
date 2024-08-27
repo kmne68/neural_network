@@ -62,6 +62,7 @@ public class NeuralNetTest extends TestCase {
     System.out.println("***** RESULT *****");
     System.out.println(result);
   }
+  
 
   public void testBackprop() {
 
@@ -229,6 +230,7 @@ public class NeuralNetTest extends TestCase {
     System.out.println(result);
   }
 
+  
   public NeuralNetTest(String testName) {
     super(testName);
   }
@@ -243,6 +245,7 @@ public class NeuralNetTest extends TestCase {
     super.tearDown();
   }
 
+  
   public void testAddBias() {
 
     // Threee neurons
@@ -267,6 +270,7 @@ public class NeuralNetTest extends TestCase {
     System.out.println("result: \n" + result);
   }
 
+  
   public void testCrossEntropy() {
     double[] expectedValues = {1, 0, 0, 0, 0, 1, 0, 1, 0};
 
@@ -292,8 +296,7 @@ public class NeuralNetTest extends TestCase {
       }
     });
   }
-
-
+  
 
   public void testReLu() {
 
@@ -391,6 +394,30 @@ public class NeuralNetTest extends TestCase {
     // Apply Softmax to the output (final) layer
     output = output.softmax();
     System.out.println("SOFTMAX OUTPUT:\n" + output);
+  }
+  
+  
+  public void testWeightGradient() {
+    int inputRows = 4;
+    int outputRows = 5;
+    Matrix weights = new Matrix(outputRows, inputRows, i -> random.nextGaussian());
+    Matrix input = Utils.generateInputMatrix(inputRows, 1);
+    Matrix expected = Utils.generateExpectedMatrix(outputRows, 1);
+    
+    Matrix output = weights.multiply(input).softmax();
+    Matrix loss = LossFunctions.crossEntropy(expected, output);
+    Matrix calculatedError = output.apply((index, value) -> value - expected.get(index));
+    Matrix calculatedWeightGradients = calculatedError.multiply(input.transpose());
+    
+    
+    System.out.println("********** testWeightGradient ***********");
+    System.out.println("Input: \n" + input);
+    System.out.println("Weights: \n" + weights);
+    System.out.println("Output: \n" + output);
+    System.out.println("Expected: \n" + expected);
+    System.out.println("Loss: \n" + loss);
+    System.out.println("Calcualted Error: \n" + calculatedError);
+    System.out.println("calculatedWeightGradients: \n" + calculatedWeightGradients);
   }
 
 }
