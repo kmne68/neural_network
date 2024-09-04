@@ -409,7 +409,16 @@ public class NeuralNetTest extends TestCase {
     Matrix calculatedError = output.apply((index, value) -> value - expected.get(index));
     Matrix calculatedWeightGradients = calculatedError.multiply(input.transpose());
     
+    Matrix approximatedWeightGradients = Approximator.weightGradient(
+                                                        weights,
+                                                        w -> { 
+                                                        Matrix out = w.multiply(input).softmax();
+                                                        return LossFunctions.crossEntropy(expected, out);
+                                                      }); 
     
+    calculatedWeightGradients.setTolerance(0.01);
+    assertTrue(calculatedWeightGradients.equals(approximatedWeightGradients));
+   
     System.out.println("********** testWeightGradient ***********");
     System.out.println("Input: \n" + input);
     System.out.println("Weights: \n" + weights);
@@ -418,6 +427,7 @@ public class NeuralNetTest extends TestCase {
     System.out.println("Loss: \n" + loss);
     System.out.println("Calcualted Error: \n" + calculatedError);
     System.out.println("calculatedWeightGradients: \n" + calculatedWeightGradients);
+    System.out.println("approximatedWeightGradients: \n" + approximatedWeightGradients);
   }
 
 }
