@@ -269,6 +269,29 @@ public class NeuralNetTest extends TestCase {
     System.out.println("biases: \n" + biases);
     System.out.println("result: \n" + result);
   }
+  
+  
+  public void testAverageColumn() {
+    int rows = 3;
+    int cols = 4;
+    
+    Matrix m = new Matrix(rows, cols, i -> i);
+    
+    double averageIndex = (cols - 1) / 2.0;
+    
+    Matrix expected = new Matrix(rows, 1);
+    expected.modify((row, col, value) -> (row * cols + averageIndex));
+    Matrix result = m.averageColumn();
+    
+    System.out.println("TEST AVERAGE COLUMN:\n");
+    System.out.println(m);
+    System.out.println("TEST AVERAGE EXPECTED:\n");
+    System.out.println(expected);    
+    System.out.println("TEST RESULT AVERAGE COLUMN:\n");
+    System.out.println(result); 
+    
+    assertTrue(expected.equals(result));
+  }
 
   
   public void testCrossEntropy() {

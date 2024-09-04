@@ -76,6 +76,17 @@ public class Matrix {
   }
   
   
+  public Matrix averageColumn() {
+    Matrix result = new Matrix(rows, 1);
+    
+    forEach((row, col, index, value) -> {
+      result.a[row] += value / cols;
+    });
+    
+    return result;
+  }
+  
+  
   public Matrix apply(IndexValueProducer producer) {
     
     Matrix result = new Matrix(rows, cols);
