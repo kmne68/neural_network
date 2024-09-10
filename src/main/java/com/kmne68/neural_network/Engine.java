@@ -36,6 +36,8 @@ public class Engine {
 
     for (var t : transforms) {
       if (t == Transform.DENSE) {
+        
+        batchResult.addWeightInput(output);
 
         Matrix weight = weights.get(denseIndex);
         Matrix bias = biases.get(denseIndex);
@@ -77,6 +79,8 @@ public class Engine {
       switch (transform) {
         case DENSE:
           Matrix weight = weightIterator.next();
+          
+          batchResult.addWeightErrors(error);
 
           if (weightIterator.hasNext() || storeInputError) {
             error = weight.transpose().multiply(error);
@@ -113,6 +117,31 @@ public class Engine {
       biases.add(bias);
     }
     transforms.add(transform);
+  }
+  
+  
+  public void adjust(BatchResult batchResult, double learningRate) {
+    
+    var weightInputs = batchResult.getWeightInputs();
+    var weightErrors = batchResult.getWeightErrors();
+    
+    assert weightInputs.size() == weightErrors.size();
+    assert weightInputs.size() == weights.size();
+  }
+  
+  
+  /*
+    Evaluate cross entropy
+  */
+  public void evaluate(BatchResult batchResult, Matrix expected) {
+    
+    if(lossFunction != lossFunction.CROSS_ENTROPY) {
+      throw new UnsupportedOperationException("Only cross entropy is supported.");
+    }
+    
+    double loss = LossFunctions.crossEntropy(expected, batchResult.getOutput()).averageColumn().get(0);
+    
+    batchResult.setLoss(loss);
   }
 
   /*  
