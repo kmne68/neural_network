@@ -420,6 +420,40 @@ public class NeuralNetTest extends TestCase {
   }
   
   
+  public void testTrainengine() {
+    
+    int inputRows = 5;
+    int cols = 6;
+    int outputRows = 7;
+    
+    Matrix input = Utils.generateInputMatrix(inputRows, cols);
+    Matrix expected = Utils.generateTrainableExpectedMatrix(outputRows, input);
+    
+    Engine engine = new Engine();
+    engine.add(Transform.DENSE, 6, inputRows);
+    engine.add(Transform.RELU);
+    engine.add(Transform.DENSE, outputRows);
+    engine.add(Transform.SOFTMAX);
+    
+    BatchResult batchResult =  engine.runForward(input);
+    engine.evaluate(batchResult, expected);
+    
+    double loss1 = batchResult.getLoss();
+    
+    engine.runBackward(batchResult, expected);
+    engine.adjust(batchResult, 0.01);
+    
+    batchResult = engine.runForward(input);
+    engine.evaluate(batchResult, expected);
+    
+    double loss2 = batchResult.getLoss();
+    
+    System.out.println("++++++++++++++++++++++");
+    System.out.println("loss1 + \t + loss2");
+    System.out.println(loss1 + "\t" + loss2);
+  }
+  
+  
   public void testWeightGradient() {
     int inputRows = 4;
     int outputRows = 5;
