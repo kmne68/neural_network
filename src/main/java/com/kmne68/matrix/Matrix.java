@@ -98,6 +98,28 @@ public class Matrix {
     return result;
   }
   
+  
+  public Matrix getGreatestRowNumber() {
+    
+    Matrix result = new Matrix(1, cols);
+    
+    double[] greatest = new double[cols];
+    
+    for(int i = 0; i < cols; i++) {
+      greatest[i] = Double.MIN_VALUE;
+    }
+    
+    forEach((row, col, value) -> {
+      if(value > greatest[col]) {
+        greatest[col] = value;
+        result.a[col] = row;
+      }
+    });
+    
+    return result;
+  }
+  
+  
   // For testing ReLu with forEach(IndexValueConsumer)
   public Matrix modify(ValueProducer producer) {
     
@@ -110,6 +132,18 @@ public class Matrix {
     return this;
   }
     
+  
+    // For testing ReLu with forEach(IndexValueConsumer)
+  public Matrix modify(IndexValueProducer producer) {
+    
+    for(int i = 0; i < a.length; i++) {
+      
+      a[i] = producer.produce(i, a[i]);
+      
+    }
+    
+    return this;
+  }
   
   // For testing ReLu with modify(ValueProducer)
   public void forEach(IndexValueConsumer consumer) {

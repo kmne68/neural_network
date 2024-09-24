@@ -111,7 +111,7 @@ public class Engine {
       int weightsPerNeuron = weights.size() == 0 ? (int) params[1] : weights.getLast().getRows();
 
       Matrix weight = new Matrix(numberOfNeurons, weightsPerNeuron, i -> random.nextGaussian());
-      Matrix bias = new Matrix(numberOfNeurons, 1, i -> random.nextGaussian());
+      Matrix bias = new Matrix(numberOfNeurons, 1, i -> 0);  // random.nextGaussian());
 
       weights.add(weight);
       biases.add(bias);
@@ -127,6 +127,23 @@ public class Engine {
     
     assert weightInputs.size() == weightErrors.size();
     assert weightInputs.size() == weights.size();
+    
+    for(int i = 0; i < weights.size(); i++ ) {
+      var weight = weights.get(i);
+      var bias = biases.get(i);
+      var error = weightErrors.get(i);
+      var input = weightInputs.get(i);
+      
+      assert weight.getColumns() == input.getRows();
+      
+      var weightAdjust = error.multiply(input.transpose());
+      var biasAdjust = error.averageColumn();
+      
+      double rate = learningRate / input.getColumns();
+      
+      weight.modify((index, value) -> value - rate * weightAdjust.get(index));   // columns in input\
+      bias.modify((row, col, value) -> value - learningRate * biasAdjust.get(row));
+    }
   }
   
   
