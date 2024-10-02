@@ -99,7 +99,7 @@ public class Matrix {
   }
   
   
-  public Matrix getGreatestRowNumber() {
+  public Matrix getGreatestRowNumbers() {
     
     Matrix result = new Matrix(1, cols);
     

@@ -62,7 +62,6 @@ public class NeuralNetTest extends TestCase {
     System.out.println("***** RESULT *****");
     System.out.println(result);
   }
-  
 
   public void testBackprop() {
 
@@ -137,14 +136,13 @@ public class NeuralNetTest extends TestCase {
     System.out.println("***** RESULT *****");
     System.out.println(calculatedResult);
   }
-  
-  
-    public void testEngine() {
-    
+
+  public void testEngine() {
+
     int inputRows = 5;
     int cols = 6;
     int outputRows = 4;
-    
+
     Engine engine = new Engine();
 
     // Transforms for use in runForward
@@ -153,21 +151,20 @@ public class NeuralNetTest extends TestCase {
     engine.add(Transform.DENSE, 5);
     engine.add(Transform.RELU);
     engine.add(Transform.DENSE, 4);
-    
+
     engine.add(Transform.SOFTMAX);
     engine.setStoreInputError(true);
 
     Matrix input = Utils.generateInputMatrix(inputRows, cols);
     Matrix expected = Utils.generateExpectedMatrix(outputRows, cols);
-    
+
     Matrix approximatedError = Approximator.gradient(input, in -> {
       BatchResult batchResult = engine.runForward(in);
       return LossFunctions.crossEntropy(expected, batchResult.getOutput());
     });
-    
-    
+
     BatchResult batchResult = engine.runForward(input);
-    
+
     System.out.println("=============== FORWARD =================\n");
     System.out.println("Engine:\n" + engine);
 
@@ -177,14 +174,12 @@ public class NeuralNetTest extends TestCase {
 
     System.out.println("CALUCULATED ERROR:\n" + calculatedError);
     System.out.println("APPROXIMATED ERROR:\n" + approximatedError);
-    
+
     calculatedError.setTolerance(0.001);
-    
+
     assertTrue(calculatedError.equals(approximatedError));
-    
-    
+
   }
-  
 
   public void testSoftmaxCrossEntropyGradient() {
 
@@ -230,7 +225,6 @@ public class NeuralNetTest extends TestCase {
     System.out.println(result);
   }
 
-  
   public NeuralNetTest(String testName) {
     super(testName);
   }
@@ -245,7 +239,6 @@ public class NeuralNetTest extends TestCase {
     super.tearDown();
   }
 
-  
   public void testAddBias() {
 
     // Threee neurons
@@ -269,31 +262,29 @@ public class NeuralNetTest extends TestCase {
     System.out.println("biases: \n" + biases);
     System.out.println("result: \n" + result);
   }
-  
-  
+
   public void testAverageColumn() {
     int rows = 3;
     int cols = 4;
-    
+
     Matrix m = new Matrix(rows, cols, i -> i);
-    
+
     double averageIndex = (cols - 1) / 2.0;
-    
+
     Matrix expected = new Matrix(rows, 1);
     expected.modify((row, col, value) -> (row * cols + averageIndex));
     Matrix result = m.averageColumn();
-    
+
     System.out.println("TEST AVERAGE COLUMN:\n");
     System.out.println(m);
     System.out.println("TEST AVERAGE EXPECTED:\n");
-    System.out.println(expected);    
+    System.out.println(expected);
     System.out.println("TEST RESULT AVERAGE COLUMN:\n");
-    System.out.println(result); 
-    
+    System.out.println(result);
+
     assertTrue(expected.equals(result));
   }
 
-  
   public void testCrossEntropy() {
     double[] expectedValues = {1, 0, 0, 0, 0, 1, 0, 1, 0};
 
@@ -319,7 +310,6 @@ public class NeuralNetTest extends TestCase {
       }
     });
   }
-  
 
   public void testReLu() {
 
@@ -418,64 +408,65 @@ public class NeuralNetTest extends TestCase {
     output = output.softmax();
     System.out.println("SOFTMAX OUTPUT:\n" + output);
   }
-  
-  
+
   public void testTrainengine() {
-    
-    int inputRows = 5;
-    int cols = 6;
-    int outputRows = 7;
-    
-    Matrix input = Utils.generateInputMatrix(inputRows, cols);
-    Matrix expected = Utils.generateTrainableExpectedMatrix(outputRows, input);
-    
+
+    int inputRows = 500;
+    int cols = 32;
+    int outputRows = 3;
+
+    //  Matrix input = Utils.generateInputMatrix(inputRows, cols);                  // moved into loop below
+    //  Matrix expected = Utils.generateTrainableExpectedMatrix(outputRows, input); // moved into loop below
     Engine engine = new Engine();
     engine.add(Transform.DENSE, 6, inputRows);
     engine.add(Transform.RELU);
     engine.add(Transform.DENSE, outputRows);
     engine.add(Transform.SOFTMAX);
-    
-    BatchResult batchResult =  engine.runForward(input);
-    engine.evaluate(batchResult, expected);
-    
-    double loss1 = batchResult.getLoss();
-    
-    engine.runBackward(batchResult, expected);
-    engine.adjust(batchResult, 0.01);
-    
-    batchResult = engine.runForward(input);
-    engine.evaluate(batchResult, expected);
-    
-    double loss2 = batchResult.getLoss();
-    
-    System.out.println("++++++++++++++++++++++");
-    System.out.println("loss1 + \t + loss2");
-    System.out.println(loss1 + "\t" + loss2);
+
+    for (int i = 0; i < 20; i++) {
+      Matrix input = Utils.generateInputMatrix(inputRows, cols);
+      Matrix expected = Utils.generateTrainableExpectedMatrix(outputRows, input);
+      BatchResult batchResult = engine.runForward(input);
+      //  engine.evaluate(batchResult, expected);     // commented out in lesson 135
+      //  double loss1 = batchResult.getLoss();       // commented out in lesson 135
+      engine.runBackward(batchResult, expected);
+      engine.adjust(batchResult, 0.01);
+      //  batchResult = engine.runForward(input);     // commented out in lesson 135
+      engine.evaluate(batchResult, expected);
+
+      double loss2 = batchResult.getLoss();
+      double percentCorrect = batchResult.getPercentCorrect();
+
+      System.out.println("++++++++++++++++++++++");
+      //  System.out.println("loss1 + \t + loss2");
+      //  System.out.println(loss1 + "\t" + loss2);
+      System.out.printf("Loss: %.3f, %% correct: %.2f\n", loss2, percentCorrect);
+      // System.out.println("percentCorrect: " + percentCorrect);
+    }
   }
-  
-  
+
   public void testWeightGradient() {
     int inputRows = 4;
     int outputRows = 5;
     Matrix weights = new Matrix(outputRows, inputRows, i -> random.nextGaussian());
     Matrix input = Utils.generateInputMatrix(inputRows, 1);
     Matrix expected = Utils.generateExpectedMatrix(outputRows, 1);
-    
+
     Matrix output = weights.multiply(input).softmax();
     Matrix loss = LossFunctions.crossEntropy(expected, output);
     Matrix calculatedError = output.apply((index, value) -> value - expected.get(index));
     Matrix calculatedWeightGradients = calculatedError.multiply(input.transpose());
-    
+
     Matrix approximatedWeightGradients = Approximator.weightGradient(
-                                                        weights,
-                                                        w -> { 
-                                                        Matrix out = w.multiply(input).softmax();
-                                                        return LossFunctions.crossEntropy(expected, out);
-                                                      }); 
-    
+            weights,
+            w -> {
+              Matrix out = w.multiply(input).softmax();
+              return LossFunctions.crossEntropy(expected, out);
+            });
+
     calculatedWeightGradients.setTolerance(0.01);
     assertTrue(calculatedWeightGradients.equals(approximatedWeightGradients));
-   
+
     System.out.println("********** testWeightGradient ***********");
     System.out.println("Input: \n" + input);
     System.out.println("Weights: \n" + weights);

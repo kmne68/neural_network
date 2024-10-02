@@ -38,12 +38,12 @@ public class Utils {
 
     Matrix columnSums = input.sumColumns();
 
-    System.out.println("FROM Utils: \n");
+  //  System.out.println("FROM Utils: \n");
     columnSums.forEach((row, col, value) -> {
       int rowIndex = (int) (outputRows * (Math.sin(value) + 1.0) / 2.0);
 
       expected.set(rowIndex, col, 1);
-      System.out.println(rowIndex);
+  //    System.out.println(rowIndex);
     });
     
 
