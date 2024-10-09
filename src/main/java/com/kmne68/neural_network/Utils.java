@@ -49,4 +49,35 @@ public class Utils {
 
     return expected;
   }
+  
+  
+  public static TrainingMatrices generateTrainingMatrix(int inputRows, int outputRows, int cols) {
+    
+    Matrix input = new Matrix(inputRows, cols);
+    Matrix output = new Matrix(outputRows, cols);
+    
+    for(int col = 0; col < cols; col++) {
+      int radius = random.nextInt(outputRows);
+      
+      double[] values = new double[inputRows];
+      double initialRadius = 0;
+      
+      for(int row = 0; row < inputRows; row++) {
+        double value = random.nextGaussian();
+        values[row] = value;
+        initialRadius += value * value;
+        
+      }
+      initialRadius = Math.sqrt(initialRadius);
+      
+      for(int row = 0; row < inputRows; row++) {
+        input.set(row, col, values[row] * radius/initialRadius);
+      }
+      
+      output.set(radius, col, 1);   // how far is this point from the origin
+    }
+    
+    return new TrainingMatrices(input, output);
+    
+  }
 }
