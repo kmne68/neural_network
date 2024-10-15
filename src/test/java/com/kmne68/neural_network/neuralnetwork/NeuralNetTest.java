@@ -9,6 +9,7 @@ import com.kmne68.neural_network.Approximator;
 import com.kmne68.neural_network.BatchResult;
 import com.kmne68.neural_network.Engine;
 import com.kmne68.neural_network.LossFunctions;
+import com.kmne68.neural_network.RunningAverages;
 import com.kmne68.neural_network.Transform;
 import com.kmne68.neural_network.Utils;
 import java.util.Random;
@@ -422,10 +423,17 @@ public class NeuralNetTest extends TestCase {
     engine.add(Transform.RELU);
     engine.add(Transform.DENSE, outputRows);
     engine.add(Transform.SOFTMAX);
+    
+    RunningAverages runningAverages = new RunningAverages(2, 10, (callNumber, averages) -> {});
+    System.exit(0);
 
-    for (int i = 0; i < 20; i++) {
-      Matrix input = Utils.generateInputMatrix(inputRows, cols);
-      Matrix expected = Utils.generateTrainableExpectedMatrix(outputRows, input);
+    for (int i = 0; i < 2000; i++) {      // changed i < 20 to i < 2000 lesson 138
+      var trainingMatrices = Utils.generateTrainingMatrix(inputRows, outputRows, cols);
+      var input = trainingMatrices.getInput();
+      var expected = trainingMatrices.getOutput();
+      
+    //  Matrix input = Utils.generateInputMatrix(inputRows, cols);
+    //   Matrix expected = Utils.generateTrainableExpectedMatrix(outputRows, input);
       BatchResult batchResult = engine.runForward(input);
       //  engine.evaluate(batchResult, expected);     // commented out in lesson 135
       //  double loss1 = batchResult.getLoss();       // commented out in lesson 135
