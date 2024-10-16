@@ -419,15 +419,21 @@ public class NeuralNetTest extends TestCase {
     //  Matrix input = Utils.generateInputMatrix(inputRows, cols);                  // moved into loop below
     //  Matrix expected = Utils.generateTrainableExpectedMatrix(outputRows, input); // moved into loop below
     Engine engine = new Engine();
-    engine.add(Transform.DENSE, 6, inputRows);
+    engine.add(Transform.DENSE, 100, inputRows);
     engine.add(Transform.RELU);
     engine.add(Transform.DENSE, outputRows);
     engine.add(Transform.SOFTMAX);
     
-    RunningAverages runningAverages = new RunningAverages(2, 10, (callNumber, averages) -> {});
-    System.exit(0);
+    RunningAverages runningAverages = new RunningAverages(2, 500, (callNumber, averages) -> {
+      assertTrue(averages[0] < 6);
+      System.out.printf("%d. Loss: %.3f -- Percent correct: %.2f\n", callNumber, averages[0], averages[1]);
+    });
+    
+    double initialLearningRate = 0.02;
+    double learningRate = initialLearningRate;
+    double iterations = 500;
 
-    for (int i = 0; i < 2000; i++) {      // changed i < 20 to i < 2000 lesson 138
+    for (int i = 0; i < iterations; i++) {      // changed i < 20 to i < 2000 lesson 138
       var trainingMatrices = Utils.generateTrainingMatrix(inputRows, outputRows, cols);
       var input = trainingMatrices.getInput();
       var expected = trainingMatrices.getOutput();
@@ -438,17 +444,23 @@ public class NeuralNetTest extends TestCase {
       //  engine.evaluate(batchResult, expected);     // commented out in lesson 135
       //  double loss1 = batchResult.getLoss();       // commented out in lesson 135
       engine.runBackward(batchResult, expected);
-      engine.adjust(batchResult, 0.01);
+      engine.adjust(batchResult, learningRate);
       //  batchResult = engine.runForward(input);     // commented out in lesson 135
       engine.evaluate(batchResult, expected);
 
-      double loss2 = batchResult.getLoss();
-      double percentCorrect = batchResult.getPercentCorrect();
+      // double loss2 = batchResult.getLoss();
+      // double percentCorrect = batchResult.getPercentCorrect();
 
       System.out.println("++++++++++++++++++++++");
+      runningAverages.add(batchResult.getLoss(), batchResult.getPercentCorrect());
+      
+      learningRate -= (initialLearningRate / iterations);
+      
+      // System.out.println("LEARNING RATE: " + learningRate);
+      
       //  System.out.println("loss1 + \t + loss2");
       //  System.out.println(loss1 + "\t" + loss2);
-      System.out.printf("Loss: %.3f, %% correct: %.2f\n", loss2, percentCorrect);
+      // System.out.printf("Loss: %.3f, %% correct: %.2f\n", loss2, percentCorrect);
       // System.out.println("percentCorrect: " + percentCorrect);
     }
   }
