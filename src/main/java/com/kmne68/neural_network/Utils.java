@@ -38,46 +38,83 @@ public class Utils {
 
     Matrix columnSums = input.sumColumns();
 
-  //  System.out.println("FROM Utils: \n");
+    //  System.out.println("FROM Utils: \n");
     columnSums.forEach((row, col, value) -> {
       int rowIndex = (int) (outputRows * (Math.sin(value) + 1.0) / 2.0);
 
       expected.set(rowIndex, col, 1);
-  //    System.out.println(rowIndex);
+      //    System.out.println(rowIndex);
     });
-    
 
     return expected;
   }
-  
-  
-  public static TrainingMatrices generateTrainingMatrix(int inputRows, int outputRows, int cols) {
-    
-    Matrix input = new Matrix(inputRows, cols);
-    Matrix output = new Matrix(outputRows, cols);
-    
-    for(int col = 0; col < cols; col++) {
+
+  public static TrainingArrays generateTrainingArrays(int inputRows, int outputRows, int cols) {
+
+    double[] input = new double[inputRows * cols];
+    double[] output = new double[outputRows * cols];
+    int inputPosition = 0;
+    int outputPosition = 0;
+
+    for (int col = 0; col < cols; col++) {
       int radius = random.nextInt(outputRows);
-      
+
       double[] values = new double[inputRows];
       double initialRadius = 0;
-      
-      for(int row = 0; row < inputRows; row++) {
+
+      for (int row = 0; row < inputRows; row++) {
         double value = random.nextGaussian();
         values[row] = value;
         initialRadius += value * value;
-        
+
       }
       initialRadius = Math.sqrt(initialRadius);
-      
-      for(int row = 0; row < inputRows; row++) {
-        input.set(row, col, values[row] * radius/initialRadius);
+
+      for (int row = 0; row < inputRows; row++) {
+        input[inputPosition++] = values[row] * radius / initialRadius;
       }
+
+      output[outputPosition + radius] = 1;
+
+      outputPosition += outputRows; 
+    }
+  
+
+  return new TrainingArrays(input, output);
+
+}
+
+public static TrainingMatrices generateTrainingMatrix(int inputRows, int outputRows, int cols) {
+
+    var io = generateTrainingArrays(inputRows, outputRows, cols);
+    Matrix input = new Matrix(inputRows, cols, io.getInput());
+    Matrix output = new Matrix(outputRows, cols, io.getOutput());
+    
+    
+    /* Commented out in lesson 148
+    for (int col = 0; col < cols; col++) {
+      int radius = random.nextInt(outputRows);
+
+      double[] values = new double[inputRows];
+      double initialRadius = 0;
       
+      for (int row = 0; row < inputRows; row++) {
+        double value = random.nextGaussian();
+        values[row] = value;
+        initialRadius += value * value;
+
+      }
+      initialRadius = Math.sqrt(initialRadius);
+
+      for (int row = 0; row < inputRows; row++) {
+        input.set(row, col, values[row] * radius / initialRadius);
+      }
+
       output.set(radius, col, 1);   // how far is this point from the origin
     }
-    
+    */
+
     return new TrainingMatrices(input, output);
-    
+
   }
 }
