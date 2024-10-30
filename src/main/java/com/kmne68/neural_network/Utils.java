@@ -49,20 +49,20 @@ public class Utils {
     return expected;
   }
 
-  public static TrainingArrays generateTrainingArrays(int inputRows, int outputRows, int cols) {
+  public static TrainingArrays generateTrainingArrays(int inputSize, int ouputSize, int cols) {
 
-    double[] input = new double[inputRows * cols];
-    double[] output = new double[outputRows * cols];
+    double[] input = new double[inputSize * cols];
+    double[] output = new double[ouputSize * cols];
     int inputPosition = 0;
     int outputPosition = 0;
 
     for (int col = 0; col < cols; col++) {
-      int radius = random.nextInt(outputRows);
+      int radius = random.nextInt(ouputSize);
 
-      double[] values = new double[inputRows];
+      double[] values = new double[inputSize];
       double initialRadius = 0;
 
-      for (int row = 0; row < inputRows; row++) {
+      for (int row = 0; row < inputSize; row++) {
         double value = random.nextGaussian();
         values[row] = value;
         initialRadius += value * value;
@@ -70,13 +70,13 @@ public class Utils {
       }
       initialRadius = Math.sqrt(initialRadius);
 
-      for (int row = 0; row < inputRows; row++) {
+      for (int row = 0; row < inputSize; row++) {
         input[inputPosition++] = values[row] * radius / initialRadius;
       }
 
       output[outputPosition + radius] = 1;
 
-      outputPosition += outputRows; 
+      outputPosition += ouputSize; 
     }
   
 
