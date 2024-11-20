@@ -49,14 +49,14 @@ public class Utils {
     return expected;
   }
 
-  public static TrainingArrays generateTrainingArrays(int inputSize, int ouputSize, int cols) {
+  public static TrainingArrays generateTrainingArrays(int inputSize, int ouputSize, int numberOfItems) {
 
-    double[] input = new double[inputSize * cols];
-    double[] output = new double[ouputSize * cols];
+    double[] input = new double[inputSize * numberOfItems];
+    double[] output = new double[ouputSize * numberOfItems];
     int inputPosition = 0;
     int outputPosition = 0;
 
-    for (int col = 0; col < cols; col++) {
+    for (int col = 0; col < numberOfItems; col++) {
       int radius = random.nextInt(ouputSize);
 
       double[] values = new double[inputSize];

@@ -4,6 +4,7 @@
  */
 package com.kmne68.neural_network.loader.test;
 
+import com.kmne68.neural_network.Utils;
 import com.kmne68.neural_network.loader.BatchData;
 import com.kmne68.neural_network.loader.MetaData;
 
@@ -55,7 +56,33 @@ public class TestLoader implements com.kmne68.neural_network.loader.Loader {
 
   @Override
   public BatchData readBatch() {
-    throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+
+    if(totalItemsRead == numberOfItems) {
+      
+      return null;
+    }
+    
+    itemsRead = batchSize;
+
+    totalItemsRead += itemsRead;
+    
+    int excessItems = totalItemsRead - numberOfItems;
+    
+    if(excessItems > 0) {
+      totalItemsRead -= excessItems;
+      itemsRead -= excessItems;
+    }
+    
+    var io = Utils.generateTrainingArrays(inputSize, expectedSize, itemsRead);
+    
+    var batchData = new TestBatchData();
+    batchData.setInputBatch(io.getInput());
+    batchData.setExpectedBatch(io.getOutput());
+    
+    metaData.setTotalItemsRead(totalItemsRead);
+    metaData.setItemsRead(itemsRead);
+    
+    return batchData;
   }
   
 }
