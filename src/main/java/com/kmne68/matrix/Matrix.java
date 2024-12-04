@@ -52,6 +52,7 @@ public class Matrix {
     double produce(int index);
   }
 
+
   /**
    * General purpose method to produce a new Matrix
    */
@@ -249,6 +250,18 @@ public class Matrix {
     }
     return result;
   }
+    
+  
+  public double sum() {
+    double sum = 0;
+    
+    for(var v: a) {
+      sum += v;
+    }
+    
+    return sum;
+  }
+  
 
   public double get(int index) {
     return a[index];

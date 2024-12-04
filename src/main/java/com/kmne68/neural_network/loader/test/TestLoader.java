@@ -16,15 +16,19 @@ public class TestLoader implements com.kmne68.neural_network.loader.Loader {
   
   private MetaData metaData;
   
-  private int numberOfItems = 60_000;
+  private int numberOfItems = 0;
   private int inputSize = 500;
   private int expectedSize = 3;
   private int numberOfBatches;
-  private int batchSize = 32;
+  private int batchSize = 0;
   private int totalItemsRead;
   private int itemsRead;
   
-  public TestLoader() {
+  public TestLoader(int numberOfItems, int batchSize) {
+    
+    this.numberOfItems = numberOfItems;
+    this.batchSize = batchSize;
+    
     metaData = new TestMetaData();
     metaData.setNumberOfItems(numberOfItems);
     
