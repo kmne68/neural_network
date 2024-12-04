@@ -4,6 +4,7 @@
  */
 package com.kmne68.neural_network.loader.test;
 
+import com.kmne68.matrix.Matrix;
 import com.kmne68.neural_network.loader.BatchData;
 import com.kmne68.neural_network.loader.Loader;
 import com.kmne68.neural_network.loader.MetaData;
@@ -32,19 +33,39 @@ public class TestTestLoader extends TestCase {
 
     
   public void testLoader() {
-    int batchSize = 32;
-    Loader testLoader = new TestLoader(60000, 32);
+    int batchSize = 33;
+    Loader testLoader = new TestLoader(600, batchSize);
     
     MetaData metaData = testLoader.open();
     
-    for(int i = 0; i < metaData.getNumberOfBatches(); i++) {
+    int numberOfItems = metaData.getNumberOfItems();
+    
+    int lastBatchSize = numberOfItems % batchSize;
+    
+    int numberOfBatches = metaData.getNumberOfBatches();
+    
+    for(int i = 0; i < numberOfBatches; i++) {
       BatchData batchData = testLoader.readBatch();
       
       assertTrue(batchData != null);
       
       int itemsRead = metaData.getItemsRead();
+      int inputSize = metaData.getInputSize();
+      int expectedSize = metaData.getExpectedSize();
       
-      assertTrue(itemsRead == batchSize);
+      Matrix input = new Matrix(inputSize, itemsRead, batchData.getInputBatch());
+      Matrix expected = new Matrix(expectedSize, itemsRead, batchData.getExpectedBatch());
+      
+      assertTrue(input.sum() != 0);
+      assertTrue(expected.sum() == itemsRead);
+      
+      // Special condition when the batchSize doesn't divide evenly into number of batches
+      if(i == numberOfBatches - 1) {
+        assertTrue(itemsRead == lastBatchSize);
+      }
+      else {
+        assertTrue(itemsRead == batchSize);
+      }      
     }
   }
 }
