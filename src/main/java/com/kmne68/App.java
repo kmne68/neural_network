@@ -6,6 +6,8 @@ package com.kmne68;
 
 import com.kmne68.neural_network.NeuralNetwork;
 import com.kmne68.neural_network.Transform;
+import com.kmne68.neural_network.loader.Loader;
+import com.kmne68.neural_network.loader.test.TestLoader;
 
 /**
  *
@@ -24,7 +26,15 @@ public class App {
       neuralNetwork.add(Transform.RELU);
       neuralNetwork.add(Transform.DENSE, outputRows);
       neuralNetwork.add(Transform.SOFTMAX);
+      
+      neuralNetwork.setEpochs((20));
+      neuralNetwork.setLearningRates(0.02, 0);
+      
+      Loader trainLoader = new TestLoader(60_000, 32);
+      Loader testLoader = new TestLoader(10_000, 32);
+      
+      neuralNetwork.fit(trainLoader, testLoader);
     
-    System.out.println("NeuralNetowrk:" + neuralNetwork);
+    System.out.println("NeuralNetwork:" + neuralNetwork);
   }
 }
