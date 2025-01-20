@@ -50,7 +50,7 @@ public class TestLoader implements com.kmne68.neural_network.loader.Loader {
 
   @Override
   public void close() {
-
+    totalItemsRead = 0;
   }
 
   @Override
