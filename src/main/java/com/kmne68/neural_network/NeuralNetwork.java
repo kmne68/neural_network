@@ -8,6 +8,9 @@ import com.kmne68.matrix.Matrix;
 import com.kmne68.neural_network.loader.BatchData;
 import com.kmne68.neural_network.loader.Loader;
 import com.kmne68.neural_network.loader.MetaData;
+import java.util.LinkedList;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 /**
  *
@@ -22,12 +25,18 @@ public class NeuralNetwork {
   private double initialLearningRate = 0.1;
   private double finalLearningRate = 0;
   private Object lock = new Object();
+  private int threads;
   
   
   public NeuralNetwork() {
     engine = new Engine();
   }
 
+  public void setThreads(int threads) {
+    this.threads = threads;
+  }
+  
+  
   public void add(Transform transform, double... params) {
     engine.add(transform, params);
   }
@@ -74,26 +83,33 @@ public class NeuralNetwork {
     loader.close();
   }
 
-  private Object createBatchTasks(Loader loader, boolean trainingMode) {
+  private LinkedList<Future<BatchResult>> createBatchTasks(Loader loader, boolean trainingMode) {
+    
+    LinkedList<Future<BatchResult>> batches = new LinkedList<>();    // The return value of tasks in a thread pool
 
     MetaData metaData = loader.getMetaData();
     int numberOfBatches = metaData.getNumberOfBatches();
+    
+    var executor = Executors.newFixedThreadPool(threads);
 
     for (int i = 0; i < numberOfBatches; i++) {
-      runBatch(loader, trainingMode);
+      batches.add(executor.submit(() -> runBatch(loader, trainingMode)));
     }
-    return null;
+    
+    executor.shutdown();
+    
+    return batches;
   }
+  
 
   private void consumeBatchTasks(Object queue, boolean trainingMode) {
 
   }
+  
 
   private BatchResult runBatch(Loader loader, boolean trainingMode) {
 
     MetaData metaData = loader.open();
-
-    int numberOfItems = metaData.getNumberOfItems();
 
     BatchData batchData = loader.readBatch();
 
