@@ -9,6 +9,7 @@ import com.kmne68.neural_network.loader.BatchData;
 import com.kmne68.neural_network.loader.Loader;
 import com.kmne68.neural_network.loader.MetaData;
 import java.util.LinkedList;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
@@ -25,7 +26,7 @@ public class NeuralNetwork {
   private double initialLearningRate = 0.1;
   private double finalLearningRate = 0;
   private Object lock = new Object();
-  private int threads;
+  private int threads = 2;
   
   
   public NeuralNetwork() {
@@ -46,9 +47,11 @@ public class NeuralNetwork {
     this.finalLearningRate = finalLearningRate;
   }
 
+  
   public void setEpochs(int epochs) {
     this.epochs = epochs;
   }
+  
 
   public void fit(Loader trainLoader, Loader evalLoader) {
     learningRate = initialLearningRate;
@@ -61,6 +64,8 @@ public class NeuralNetwork {
       if (evalLoader != null) {
         runEpoch(evalLoader, false);
       }
+      
+      System.out.println("");
 
       learningRate -= (initialLearningRate - finalLearningRate) / epochs;
 
@@ -102,8 +107,26 @@ public class NeuralNetwork {
   }
   
 
-  private void consumeBatchTasks(Object queue, boolean trainingMode) {
-
+  private void consumeBatchTasks(LinkedList<Future<BatchResult>> batches, boolean trainingMode) {
+    
+    var numberOfBatches = batches.size();
+    int index = 0;
+    
+    for(var batch: batches) {
+      try {
+        var batchResult = batch.get();
+      }
+      catch (Exception e) {
+        throw new RuntimeException("Execution error: ", e);
+      }
+      int printDot = numberOfBatches/30;
+      
+      if(trainingMode && index++ % printDot == 0) {
+        System.out.print(".");
+      }
+    }
+    
+    
   }
   
 
