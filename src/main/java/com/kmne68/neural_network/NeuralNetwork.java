@@ -181,11 +181,11 @@ public class NeuralNetwork {
     sb.append(String.format("Final learning rate: %.5f\n", finalLearningRate));
     sb.append(String.format("Threads: %d\n", threads));
     
-    sb.append("\nEngine Configuration:");
+    sb.append("\nEngine Configuration:\n");
     sb.append("-----------------------\n");
     sb.append(engine);
     
-    return "NeuralNetwork{" + "engine=" + engine.toString() + '}';
+    return sb.toString();
   }
 
 }
