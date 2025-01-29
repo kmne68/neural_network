@@ -19,10 +19,15 @@ public class Engine {
   private LinkedList<Matrix> biases = new LinkedList<>();
 
   private LossFunction lossFunction = LossFunction.CROSS_ENTROPY;
+  private double scaleInitialWeights = 1;
   private boolean storeInputError = false;
 
   public void add(Transform transform) {
     transforms.add(transform);
+  }
+  
+  public void setScaleInitialWeights(double scale) {
+    scaleInitialWeights = scale;
   }
 
   public BatchResult runForward(Matrix input) {
@@ -110,7 +115,7 @@ public class Engine {
       int numberOfNeurons = (int) params[0];
       int weightsPerNeuron = weights.size() == 0 ? (int) params[1] : weights.getLast().getRows();
 
-      Matrix weight = new Matrix(numberOfNeurons, weightsPerNeuron, i -> random.nextGaussian());
+      Matrix weight = new Matrix(numberOfNeurons, weightsPerNeuron, i -> scaleInitialWeights * random.nextGaussian());
       Matrix bias = new Matrix(numberOfNeurons, 1, i -> 0);  // random.nextGaussian());
 
       weights.add(weight);
@@ -194,6 +199,9 @@ public class Engine {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
+    
+    sb.append(String.format("Scale initial weights: %.3f\n", scaleInitialWeights));
+    sb.append("\nTransforms:\n");
 
     int weightIndex = 0;
     for (var t : transforms) {

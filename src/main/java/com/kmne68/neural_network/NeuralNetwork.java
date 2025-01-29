@@ -21,13 +21,14 @@ public class NeuralNetwork {
 
   private Engine engine;
 
+  // Configuration
   private int epochs = 20; // The number of times we'll go through the dataset while training
-  private double learningRate;
   private double initialLearningRate = 0.1;
-  private double finalLearningRate = 0;
-  private Object lock = new Object();
+  private double finalLearningRate = 0.001;
   private int threads = 2;
   
+  private double learningRate;
+  private Object lock = new Object();
   
   public NeuralNetwork() {
     engine = new Engine();
@@ -37,6 +38,9 @@ public class NeuralNetwork {
     this.threads = threads;
   }
   
+  public void setScaleInitialWeights(double scale ) {
+    engine.setScaleInitialWeights(scale);
+  }
   
   public void add(Transform transform, double... params) {
     engine.add(transform, params);
@@ -72,10 +76,6 @@ public class NeuralNetwork {
     }
   }
 
-  @Override
-  public String toString() {
-    return "NeuralNetwork{" + "engine=" + engine.toString() + '}';
-  }
 
   private void runEpoch(Loader loader, boolean trainingMode) {
 
@@ -111,10 +111,17 @@ public class NeuralNetwork {
     
     var numberOfBatches = batches.size();
     int index = 0;
+    double averageLoss = 0;
+    double averagePercentCorrect = 0;
     
     for(var batch: batches) {
       try {
         var batchResult = batch.get();
+        
+        if(!trainingMode) {
+          averageLoss += batchResult.getLoss();
+          averagePercentCorrect += batchResult.getPercentCorrect();
+        }
       }
       catch (Exception e) {
         throw new RuntimeException("Execution error: ", e);
@@ -126,6 +133,12 @@ public class NeuralNetwork {
       }
     }
     
+    if(!trainingMode) {
+      averageLoss /= batches.size();
+      averagePercentCorrect /= batches.size();
+      
+      System.out.printf("Loss: %.3f -- Percent correct: %.2f", averageLoss, averagePercentCorrect);
+    }
     
   }
   
@@ -156,6 +169,23 @@ public class NeuralNetwork {
     }
             
     return batchResult;
+  }
+  
+  
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder();
+    
+    sb.append(String.format("Epochs: %d\n", epochs));
+    sb.append(String.format("Initial learning rate: %.5f\n", initialLearningRate));
+    sb.append(String.format("Final learning rate: %.5f\n", finalLearningRate));
+    sb.append(String.format("Threads: %d\n", threads));
+    
+    sb.append("\nEngine Configuration:");
+    sb.append("-----------------------\n");
+    sb.append(engine);
+    
+    return "NeuralNetwork{" + "engine=" + engine.toString() + '}';
   }
 
 }

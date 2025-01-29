@@ -24,17 +24,21 @@ public class App {
     
       neuralNetwork.add(Transform.DENSE, 100, inputRows);
       neuralNetwork.add(Transform.RELU);
+      neuralNetwork.add(Transform.DENSE, 50, inputRows);
+      neuralNetwork.add(Transform.RELU);
       neuralNetwork.add(Transform.DENSE, outputRows);
       neuralNetwork.add(Transform.SOFTMAX);
       
+      neuralNetwork.setThreads(5);
       neuralNetwork.setEpochs((20));
-      neuralNetwork.setLearningRates(0.02, 0);
+      neuralNetwork.setLearningRates(0.02, 0.001);
+      
+      System.out.println("NeuralNetwork:" + neuralNetwork.toString());
       
       Loader trainLoader = new TestLoader(60_000, 32);
       Loader testLoader = new TestLoader(10_000, 32);
       
       neuralNetwork.fit(trainLoader, testLoader);
     
-    System.out.println("NeuralNetwork:" + neuralNetwork);
   }
 }

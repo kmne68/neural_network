@@ -59,7 +59,7 @@ public class TestLoader implements com.kmne68.neural_network.loader.Loader {
   }
 
   @Override
-  public BatchData readBatch() {
+  public synchronized BatchData readBatch() {
 
     if(totalItemsRead == numberOfItems) {
       
