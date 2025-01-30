@@ -5,6 +5,7 @@
 package com.kmne68.neural_network;
 
 import com.kmne68.matrix.Matrix;
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.Random;
 
@@ -12,7 +13,7 @@ import java.util.Random;
  *
  * @author kemery
  */
-public class Engine {
+public class Engine implements Serializable {
 
   private LinkedList<Transform> transforms = new LinkedList<>();
   private LinkedList<Matrix> weights = new LinkedList<>();

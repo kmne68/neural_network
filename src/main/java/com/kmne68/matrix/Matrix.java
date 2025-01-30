@@ -4,13 +4,14 @@
  */
 package com.kmne68.matrix;
 
+import java.io.Serializable;
 import java.util.Arrays;
 
 /**
  *
  * @author kemery
  */
-public class Matrix {
+public class Matrix implements Serializable {
 
   private static final String NUMBER_FORMAT = "%+12.5f";
   private double tolerance = 0.000001;
