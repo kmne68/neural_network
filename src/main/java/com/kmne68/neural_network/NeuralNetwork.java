@@ -8,8 +8,10 @@ import com.kmne68.matrix.Matrix;
 import com.kmne68.neural_network.loader.BatchData;
 import com.kmne68.neural_network.loader.Loader;
 import com.kmne68.neural_network.loader.MetaData;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
@@ -207,5 +209,27 @@ public class NeuralNetwork implements Serializable {
     return true;
     
   }
+  
+  
+    public static NeuralNetwork load(String file) {
+      
+      NeuralNetwork neuralNetwork = null;
 
+    try(var ds = new ObjectInputStream(new FileInputStream(file))) {
+        neuralNetwork = (NeuralNetwork) ds.readObject();      
+    }
+    catch(Exception e) {
+      System.err.println("Unable to load from file " + file);
+    }
+    
+    return neuralNetwork;
+    
+  }
+
+    
+    public Object readResolve() {
+      System.out.println("HELLO!");
+      this.lock = new Object();
+      return this;
+    }
 }
