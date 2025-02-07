@@ -48,6 +48,12 @@ public class Matrix implements Serializable {
     a = transposed.a;
   }
 
+  public double[] get() {
+
+    return a;
+
+  }
+
   public interface Producer {
 
     double produce(int index);

@@ -42,7 +42,8 @@ public class App {
     } else {
       System.out.println("Loaded from " + filename);
     }
-
+ 
+    System.out.println("Runtime procesors: " + Runtime.getRuntime().availableProcessors());
     System.out.println("NeuralNetwork:" + neuralNetwork.toString());
 
     Loader trainLoader = new TestLoader(60_000, 32);
@@ -51,7 +52,7 @@ public class App {
     neuralNetwork.fit(trainLoader, testLoader);
 
     if(neuralNetwork.save(filename)) {
-      System.out.println("Saved to + fielname");
+      System.out.println("Saved to + filename");
     } else {
       System.out.println("Unable to save to " + filename);
     }
