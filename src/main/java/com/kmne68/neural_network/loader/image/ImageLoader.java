@@ -9,6 +9,7 @@ import com.kmne68.neural_network.loader.Loader;
 import com.kmne68.neural_network.loader.MetaData;
 import java.io.DataInputStream;
 import java.io.FileInputStream;
+import java.io.IOException;
 
 /**
  *
@@ -38,11 +39,12 @@ public class ImageLoader implements Loader {
     }
 
     try {
-      dsImages = new DataInputStream(new FileInputStream(labelFileName));
+      dsLabels = new DataInputStream(new FileInputStream(labelFileName));
     } catch (Exception e) {
       throw new LoaderException("Cannot open " + labelFileName, e);
     }
 
+    readMetaData();
     return null;
   }
 
@@ -73,6 +75,24 @@ public class ImageLoader implements Loader {
   @Override
   public BatchData readBatch() {
     throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+  }
+  
+  
+  private MetaData readMetaData() {
+    
+    try {
+      int magicLabelNumber = dsLabels.readInt();
+      if (magicLabelNumber != 2049) {
+         throw new LoaderException("Label file " + labelFileName + " has wrong file format.");
+      }
+      
+      int numberOfLabels = dsLabels.readInt();
+      System.out.println("Number of labels: " + numberOfLabels);
+    }
+    catch(IOException e) {
+      throw new LoaderException("Unable to load " + labelFileName, e);
+    }
+    return null;
   }
 
 }
