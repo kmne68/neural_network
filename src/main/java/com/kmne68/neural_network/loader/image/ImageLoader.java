@@ -22,6 +22,7 @@ public class ImageLoader implements Loader {
   private int batchSize;
   private DataInputStream dsImages;
   private DataInputStream dsLabels;
+  private ImageMetaData metaData;
 
   public ImageLoader(String imageFileName, String labelFileName, int batchSize) {
     this.imageFileName = imageFileName;
@@ -30,7 +31,7 @@ public class ImageLoader implements Loader {
   }
 
   @Override
-  public MetaData open() {
+  public ImageMetaData open() {
 
     try {
       dsImages = new DataInputStream(new FileInputStream(imageFileName));
@@ -44,12 +45,14 @@ public class ImageLoader implements Loader {
       throw new LoaderException("Cannot open " + labelFileName, e);
     }
 
-    readMetaData();
-    return null;
+    metaData = readMetaData();
+    return metaData;
   }
 
   @Override
   public void close() {
+    
+    metaData = null;
 
     try {
       dsImages.close();
@@ -68,8 +71,8 @@ public class ImageLoader implements Loader {
   }
 
   @Override
-  public MetaData getMetaData() {
-    throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+  public ImageMetaData getMetaData() {
+    return metaData;
   }
 
   @Override
@@ -78,7 +81,11 @@ public class ImageLoader implements Loader {
   }
   
   
-  private MetaData readMetaData() {
+  private ImageMetaData readMetaData() {
+    
+    metaData = new ImageMetaData();
+    
+    int numberOfItems = 0;
     
     try {
       int magicLabelNumber = dsLabels.readInt();
@@ -86,13 +93,42 @@ public class ImageLoader implements Loader {
          throw new LoaderException("Label file " + labelFileName + " has wrong file format.");
       }
       
-      int numberOfLabels = dsLabels.readInt();
-      System.out.println("Number of labels: " + numberOfLabels);
+      numberOfItems = dsLabels.readInt();
+      
+      metaData.setNumberOfItems(numberOfItems);
+      System.out.println("Number of labels: " + numberOfItems);
     }
     catch(IOException e) {
       throw new LoaderException("Unable to load " + labelFileName, e);
     }
-    return null;
+    
+    
+    try {
+      int magicImageNumber = dsImages.readInt();
+      if (magicImageNumber != 2051) {
+         throw new LoaderException("Image file " + imageFileName + " has wrong file format.");
+      }
+      
+      if(dsImages.readInt() != numberOfItems) {
+        throw new LoaderException("Image file " + imageFileName + " has a different number of items compared to labelFileName.");
+      }
+      System.out.println("Number of Images: " + numberOfItems);
+      int height = dsImages.readInt();
+      int width = dsImages.readInt();
+      
+      metaData.setHeight(height);
+      metaData.setWidth(width);
+      metaData.setInputSize(width * height);
+      System.out.println("Height: " + height + ", Width: " + width);
+    }
+    catch(IOException e) {
+      throw new LoaderException("Unable to read " + imageFileName, e);
+    }
+    
+    metaData.setExpectedSize(10);
+    metaData.setNumberOfBatches((int) Math.ceil((double) numberOfItems) / batchSize);
+    
+    return metaData;
   }
 
 }
