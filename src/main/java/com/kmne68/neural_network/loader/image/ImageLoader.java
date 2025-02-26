@@ -10,6 +10,8 @@ import com.kmne68.neural_network.loader.MetaData;
 import java.io.DataInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  *
@@ -24,12 +26,16 @@ public class ImageLoader implements Loader {
   private DataInputStream dsLabels;
   private ImageMetaData metaData;
 
+  private Lock readLock = new ReentrantLock();
+  
+
   public ImageLoader(String imageFileName, String labelFileName, int batchSize) {
     this.imageFileName = imageFileName;
     this.labelFileName = labelFileName;
     this.batchSize = batchSize;
   }
 
+  
   @Override
   public ImageMetaData open() {
 
@@ -74,10 +80,30 @@ public class ImageLoader implements Loader {
   public ImageMetaData getMetaData() {
     return metaData;
   }
+  
 
   @Override
   public BatchData readBatch() {
-    throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    
+    readLock.lock();
+    
+    try {
+      ImageBatchData batchData = new ImageBatchData();
+      
+      int inputItemsRead = readInputBatch(batchData);
+      int expectedItemsRead = readExpectedBatch(batchData);
+      
+      if(inputItemsRead != expectedItemsRead) {
+        throw new LoaderException("Mismatch between images read and labels read.");
+      }
+      
+      metaData.setItemsRead(inputItemsRead);
+      return batchData;
+    }
+    finally {
+      readLock.unlock();
+    }
+    
   }
   
   
@@ -129,6 +155,14 @@ public class ImageLoader implements Loader {
     metaData.setNumberOfBatches((int) Math.ceil((double) numberOfItems) / batchSize);
     
     return metaData;
+  }
+
+  private int readInputBatch(ImageBatchData batchData) {
+    throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+  }
+
+  private int readExpectedBatch(ImageBatchData batchData) {
+    throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
   }
 
 }

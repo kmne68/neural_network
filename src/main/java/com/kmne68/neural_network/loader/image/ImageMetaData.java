@@ -30,6 +30,12 @@ public class ImageMetaData extends AbstractMetaData {
   public void setHeight(int height) {
     this.height = height;
   }
-  
+
+  @Override
+  public void setItemsRead(int itemsRead) {
+    super.setItemsRead(itemsRead); 
+
+    super.setTotalItemsRead(super.getTotalItemsRead() + itemsRead);
+  }
   
 }
