@@ -157,12 +157,45 @@ public class ImageLoader implements Loader {
     return metaData;
   }
 
-  private int readInputBatch(ImageBatchData batchData) {
-    throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-  }
 
   private int readExpectedBatch(ImageBatchData batchData) {
     throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+  }
+  
+  
+  
+  private int readInputBatch(ImageBatchData batchData) {
+    
+    try {
+      var totalItemsRead = metaData.getTotalItemsRead();
+      var numberOfItems = metaData.getNumberOfItems();
+      var numberToRead = Math.min(numberOfItems - totalItemsRead, batchSize);
+
+      var inputSize = metaData.getInputSize();
+      var numberOfBytesToRead = numberToRead * inputSize;
+
+      byte[] imageData = new byte[numberOfBytesToRead];
+      var numberRead = dsImages.read(imageData, 0, numberOfBytesToRead); // This could be done in a loop if the ready fails to read properly
+      
+      if(numberRead != numberOfBytesToRead) {
+        throw new LoaderException("Could not read sufficient bytes from image data.");
+      }
+      double[] data = new double[numberOfBytesToRead];
+      
+      for(int i = 0; i < numberOfBytesToRead; i++) {
+        data[i] = (imageData[i] & 0xFF) / 255.0;
+        
+        System.out.println("Image data: " + data[i]);
+      }
+      batchData.setInputBatch(data);
+      
+      return numberToRead;
+    }
+    catch(IOException e)
+    {
+      throw new LoaderException("An Error occurred reading image data.", e);
+    }
+    
   }
 
 }
