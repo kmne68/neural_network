@@ -5,7 +5,13 @@
 package com.kmne68.neural_network.loader;
 
 import com.kmne68.neural_network.loader.image.ImageLoader;
+import com.kmne68.neural_network.loader.image.ImageMetaData;
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.imageio.ImageIO;
 
 /**
  *
@@ -20,11 +26,19 @@ public class ImageWriter {
       return;
     }
 
-    String directory = args[0];
+    File dir = new File(args[0]);
 
-    if (!new File(directory).isDirectory()) {
-      System.out.println("'" + directory + "' is not a directory");
+    if (!dir.isDirectory()) {
+      try {
+        System.out.println(dir.getCanonicalPath() + " is not a directory.");
+      }
+      catch(IOException e) {
+        e.printStackTrace();  
+      }
+      return;
     }
+    
+    String directory = args[0];
 
     new ImageWriter().run(directory);
 
@@ -35,20 +49,37 @@ public class ImageWriter {
     final String trainingLabels = String.format("%s%s%s", directory, File.separator, "train-labels-idx1-ubyte");
     final String testImages = String.format("%s%s%s", directory, File.separator, "t10k-images-idx3-ubyte");
     final String testLabels = String.format("%s%s%s", directory, File.separator, "t10k-labels-idx1-ubyte");
+    
+    int batchSize = 900;
 
-    Loader trainingLoader = new ImageLoader(trainingImages, trainingLabels, 32);
-    Loader testLoader = new ImageLoader(testImages, testLabels, 32);
+    ImageLoader trainingLoader = new ImageLoader(trainingImages, trainingLabels, batchSize);
+    ImageLoader testLoader = new ImageLoader(testImages, testLabels, batchSize);
+    
+    ImageLoader loader = testLoader;
 
-    trainingLoader.open();
+    // trainingLoader.open();
     // testLoader.open();
 
-    MetaData metaData = testLoader.open();
+    ImageMetaData metaData = loader.open();
 
     for (int i = 0; i < metaData.getNumberOfBatches(); i++) {
       BatchData batchData = testLoader.readBatch();
+      
+      String montagePath = String.format("montage%d.jpg", i);      
+      System.out.println("Writing " + montagePath);
+      
+      var montage = new BufferedImage(900, 900, BufferedImage.TYPE_BYTE_GRAY);
+      
+      try {
+        ImageIO.write(montage, "jpg", new File(montagePath));
+      } catch (IOException ex) {
+        Logger.getLogger(ImageWriter.class.getName()).log(Level.SEVERE, null, ex);
+      }
+      
     }
 
-    trainingLoader.close();
-    testLoader.close();
+    // trainingLoader.close();
+    // testLoader.close();
+    loader.close();
   }
 }
