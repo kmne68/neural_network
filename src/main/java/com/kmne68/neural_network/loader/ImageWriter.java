@@ -25,7 +25,7 @@ public class ImageWriter {
       System.out.println("Usage: [app] < MNIST DATA DIRECTORY");
       return;
     }
-
+    
     File dir = new File(args[0]);
 
     if (!dir.isDirectory()) {
@@ -45,6 +45,7 @@ public class ImageWriter {
   }
 
   public void run(String directory) {
+    
     final String trainingImages = String.format("%s%s%s", directory, File.separator, "train-images-idx3-ubyte");
     final String trainingLabels = String.format("%s%s%s", directory, File.separator, "train-labels-idx1-ubyte");
     final String testImages = String.format("%s%s%s", directory, File.separator, "t10k-images-idx3-ubyte");
@@ -61,14 +62,30 @@ public class ImageWriter {
     // testLoader.open();
 
     ImageMetaData metaData = loader.open();
+    
+    int imageWidth = metaData.getWidth();
+    int imageHeight = metaData.getHeight();
 
     for (int i = 0; i < metaData.getNumberOfBatches(); i++) {
       BatchData batchData = testLoader.readBatch();
       
+      var numberOfImages = metaData.getItemsRead();
+      
+      int horizontalImages = (int)Math.sqrt(numberOfImages);
+      
+      while(numberOfImages % horizontalImages != 0) {
+        ++horizontalImages;
+      }
+      
+      int verticalImages = numberOfImages / horizontalImages;
+      
+      int canvasWidth = horizontalImages * imageWidth;
+      int canvasHeight = verticalImages * imageHeight;
+      
       String montagePath = String.format("montage%d.jpg", i);      
       System.out.println("Writing " + montagePath);
       
-      var montage = new BufferedImage(900, 900, BufferedImage.TYPE_BYTE_GRAY);
+      var montage = new BufferedImage(canvasWidth, canvasHeight, BufferedImage.TYPE_BYTE_GRAY);
       
       try {
         ImageIO.write(montage, "jpg", new File(montagePath));
