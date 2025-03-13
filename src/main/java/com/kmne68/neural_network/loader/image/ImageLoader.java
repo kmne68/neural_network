@@ -197,7 +197,7 @@ public class ImageLoader implements Loader {
       double[] data = new double[numberOfBytesToRead];
 
       for (int i = 0; i < numberOfBytesToRead; i++) {
-        data[i] = (imageData[i] & 0xFF) / 255.0;
+        data[i] = (imageData[i] & 0xFF) / 256.0;
 
         System.out.println("Image data: " + data[i]);
       }
