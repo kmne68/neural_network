@@ -43,6 +43,18 @@ public class ImageWriter {
     new ImageWriter().run(directory);
 
   }
+  
+  
+  private int convertOneHotToInt(double[] labelData, int offset, int oneHotSize) {
+    
+    for(int i = 0; i < oneHotSize; i++) {
+      if(Math.abs(labelData[offset + i] - 1) < 0.001) {
+        return i;
+      }
+    }
+    
+    throw new RuntimeException("Invalid one hot vector!");
+  }
 
   public void run(String directory) {
     
@@ -119,6 +131,10 @@ public class ImageWriter {
         Logger.getLogger(ImageWriter.class.getName()).log(Level.SEVERE, null, ex);
       }
       
+      var labelData = batchData.getExpectedBatch();
+      int label = convertOneHotToInt(labelData, 0, metaData.getExpectedSize());
+      
+      System.out.println("Label: " + label);
     }
 
     // trainingLoader.close();
