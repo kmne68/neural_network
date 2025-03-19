@@ -8,6 +8,7 @@ import com.kmne68.neural_network.loader.image.ImageLoader;
 import com.kmne68.neural_network.loader.image.ImageMetaData;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -77,6 +78,8 @@ public class ImageWriter {
     
     int imageWidth = metaData.getWidth();
     int imageHeight = metaData.getHeight();
+    
+    int labelSize = metaData.getExpectedSize();
 
     for (int i = 0; i < metaData.getNumberOfBatches(); i++) {
       BatchData batchData = testLoader.readBatch();
@@ -130,11 +133,29 @@ public class ImageWriter {
       } catch (IOException ex) {
         Logger.getLogger(ImageWriter.class.getName()).log(Level.SEVERE, null, ex);
       }
-      
+       
       var labelData = batchData.getExpectedBatch();
-      int label = convertOneHotToInt(labelData, 0, metaData.getExpectedSize());
+      StringBuilder sb = new StringBuilder();
       
-      System.out.println("Label: " + label);
+      for(int labelIndex = 0; labelIndex < numberOfImages; labelIndex++) {
+        if(labelIndex % horizontalImages == 0) {
+          sb.append("\n");
+        }
+        int label = convertOneHotToInt(labelData, labelIndex * labelSize, labelSize);
+        sb.append(String.format("%d ", label));
+      }
+      
+      String labelPath = String.format("labels%d.txt", i);
+      System.out.println("Writing " + labelPath);
+      
+      try {
+        FileWriter fw = new FileWriter(labelPath);
+        fw.write(sb.toString());
+        fw.close();
+      } catch (IOException ex) {
+        Logger.getLogger(ImageWriter.class.getName()).log(Level.SEVERE, null, ex);
+      }
+      
     }
 
     // trainingLoader.close();
