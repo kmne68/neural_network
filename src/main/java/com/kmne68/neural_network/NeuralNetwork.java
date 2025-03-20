@@ -77,6 +77,7 @@ public class NeuralNetwork implements Serializable {
   public void fit(Loader trainLoader, Loader evalLoader) {
     learningRate = initialLearningRate;
 
+    System.out.println("Number of epochs: " + epochs);
     for (int epoch = 0; epoch < epochs; epoch++) {
       System.out.printf("Epoch %3d \n", epoch + 1);
 
@@ -162,7 +163,7 @@ public class NeuralNetwork implements Serializable {
 
   private BatchResult runBatch(Loader loader, boolean trainingMode) {
 
-    MetaData metaData = loader.open();
+    MetaData metaData = loader.getMetaData();
 
     BatchData batchData = loader.readBatch();
 

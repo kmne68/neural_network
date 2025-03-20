@@ -13,7 +13,7 @@
                 <exec.vmArgs>-ea</exec.vmArgs>
                 <exec.args>${exec.vmArgs} -classpath %classpath ${exec.mainClass} ${exec.appArgs}</exec.args>
                 <exec.appArgs>src/main/java/com/kmne68/data/mnist</exec.appArgs>
-                <exec.mainClass>com.kmne68.neural_network.loader.ImageWriter</exec.mainClass>
+                <exec.mainClass>com.kmne68.App</exec.mainClass>
                 <exec.executable>java</exec.executable>
             </properties>
         </action>
@@ -30,7 +30,7 @@
                 <exec.vmArgs>-ea -agentlib:jdwp=transport=dt_socket,server=n,address=${jpda.address}</exec.vmArgs>
                 <exec.args>${exec.vmArgs} -classpath %classpath ${exec.mainClass} ${exec.appArgs}</exec.args>
                 <exec.appArgs>src/main/java/com/kmne68/data/mnist</exec.appArgs>
-                <exec.mainClass>com.kmne68.neural_network.loader.ImageWriter</exec.mainClass>
+                <exec.mainClass>com.kmne68.App</exec.mainClass>
                 <exec.executable>java</exec.executable>
                 <jpda.listen>true</jpda.listen>
             </properties>
@@ -47,7 +47,7 @@
             <properties>
                 <exec.vmArgs>-ea</exec.vmArgs>
                 <exec.args>${exec.vmArgs} -classpath %classpath ${exec.mainClass} ${exec.appArgs}</exec.args>
-                <exec.mainClass>com.kmne68.neural_network.loader.ImageWriter</exec.mainClass>
+                <exec.mainClass>com.kmne68.App</exec.mainClass>
                 <exec.executable>java</exec.executable>
                 <exec.appArgs>src/main/java/com/kmne68/data/mnist</exec.appArgs>
             </properties>
