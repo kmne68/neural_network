@@ -36,7 +36,7 @@ public class GeneratedDataApp {
       neuralNetwork.add(Transform.SOFTMAX);
 
       neuralNetwork.setThreads(5);
-      neuralNetwork.setEpochs((1));
+      neuralNetwork.setEpochs((10));
       neuralNetwork.setLearningRates(0.02, 0.001);
 
     } else {
@@ -52,7 +52,7 @@ public class GeneratedDataApp {
     neuralNetwork.fit(trainLoader, testLoader);
 
     if(neuralNetwork.save(filename)) {
-      System.out.println("Saved to + filename");
+      System.out.println("Saved to " + filename);
     } else {
       System.out.println("Unable to save to " + filename);
     }

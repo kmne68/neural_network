@@ -115,7 +115,7 @@ public class ImageLoader implements Loader {
       numberOfItems = dsLabels.readInt();
 
       metaData.setNumberOfItems(numberOfItems);
-      System.out.println("Number of labels: " + numberOfItems);
+      System.out.println("\nNumber of labels: " + numberOfItems);
     } catch (IOException e) {
       throw new LoaderException("Unable to load " + labelFileName, e);
     }

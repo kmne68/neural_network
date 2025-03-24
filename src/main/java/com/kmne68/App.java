@@ -60,14 +60,16 @@ public class App {
       // int outputRows = 3;
 
       neuralNetwork = new NeuralNetwork();
+      neuralNetwork.setScaleInitialWeights(0.2);
+      neuralNetwork.setThreads(5);
+      neuralNetwork.setEpochs((10));
+      neuralNetwork.setLearningRates(0.02, 0.001);
+      
       neuralNetwork.add(Transform.DENSE, 200, inputSize);
       neuralNetwork.add(Transform.RELU);
       neuralNetwork.add(Transform.DENSE, outputSize);
       neuralNetwork.add(Transform.SOFTMAX);
 
-      neuralNetwork.setThreads(5);
-      neuralNetwork.setEpochs((1));
-      neuralNetwork.setLearningRates(0.02, 0.001);
 
     } else {
       System.out.println("Loaded from " + filename);
@@ -79,7 +81,7 @@ public class App {
     neuralNetwork.fit(trainingLoader, testLoader);
 
     if(neuralNetwork.save(filename)) {
-      System.out.println("Saved to + filename");
+      System.out.println("Saved to" + filename);
     } else {
       System.out.println("Unable to save to " + filename);
     }

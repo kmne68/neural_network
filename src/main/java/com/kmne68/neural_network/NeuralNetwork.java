@@ -29,7 +29,7 @@ public class NeuralNetwork implements Serializable {
   private Engine engine;
 
   // Configuration
-  private int epochs = 20; // The number of times we'll go through the dataset while training
+  private int epochs = 10; // The number of times we'll go through the dataset while training
   private double initialLearningRate = 0.1;
   private double finalLearningRate = 0.001;
   private int threads = 2;
@@ -79,7 +79,7 @@ public class NeuralNetwork implements Serializable {
 
     System.out.println("Number of epochs: " + epochs);
     for (int epoch = 0; epoch < epochs; epoch++) {
-      System.out.printf("Epoch %3d \n", epoch + 1);
+      System.out.printf("Epoch: %3d \n", epoch + 1);
 
       runEpoch(trainLoader, true);
 
