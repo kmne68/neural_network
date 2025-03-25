@@ -78,6 +78,7 @@ public class App {
     System.out.println("Runtime procesors: " + Runtime.getRuntime().availableProcessors());
     System.out.println("NeuralNetwork:" + neuralNetwork.toString());
 
+    System.out.println("App thinks epochs are: " + neuralNetwork.getEpochs());
     neuralNetwork.fit(trainingLoader, testLoader);
 
     if(neuralNetwork.save(filename)) {

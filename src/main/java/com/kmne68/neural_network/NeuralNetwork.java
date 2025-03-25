@@ -61,6 +61,12 @@ public class NeuralNetwork implements Serializable {
   
   public void setEpochs(int epochs) {
     this.epochs = epochs;
+    System.out.println("NUMBER OF EPOCHS SET: " + epochs);
+  }
+  
+  
+  public int getEpochs() {
+    return this.epochs;
   }
   
   

@@ -4,12 +4,14 @@
  */
 package com.kmne68.neural_network.loader;
 
+import com.kmne68.neural_network.NeuralNetwork;
 import com.kmne68.neural_network.loader.image.ImageLoader;
 import com.kmne68.neural_network.loader.image.ImageMetaData;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
@@ -48,13 +50,17 @@ public class ImageWriter {
   
   private int convertOneHotToInt(double[] labelData, int offset, int oneHotSize) {
     
+    double maxValue = 0;
+    int maxIndex = 0;
+    
     for(int i = 0; i < oneHotSize; i++) {
-      if(Math.abs(labelData[offset + i] - 1) < 0.001) {
-        return i;
+      if(labelData[offset + i] > maxValue) {
+        maxValue = labelData[offset + i];
+        maxIndex = i;
       }
     }
     
-    throw new RuntimeException("Invalid one hot vector!");
+    return maxIndex;
   }
 
   public void run(String directory) {
@@ -75,6 +81,8 @@ public class ImageWriter {
     // testLoader.open();
 
     ImageMetaData metaData = loader.open();
+    
+    var neuralNetwork = NeuralNetwork.load("mnistNeural0.net");
     
     int imageWidth = metaData.getWidth();
     int imageHeight = metaData.getHeight();
@@ -103,7 +111,22 @@ public class ImageWriter {
       var montage = new BufferedImage(canvasWidth, canvasHeight, BufferedImage.TYPE_BYTE_GRAY);
       
       double[] pixelData = batchData.getInputBatch();
+      double[] labelData = batchData.getExpectedBatch();
       int imageSize = imageWidth * imageHeight;
+      
+      boolean[] correct = new boolean[numberOfImages];
+      
+      for(int n = 0; n < numberOfImages; n++) {
+        double[] singleImage = Arrays.copyOfRange(pixelData, n * imageSize, (n + 1) * imageSize);
+        double[] singleLabel = Arrays.copyOfRange(labelData, n * labelSize, (n + 1) * labelSize);
+        double[] predictedLabel = neuralNetwork.predict(singleImage);
+        int predicted = convertOneHotToInt(predictedLabel, 0, labelSize);
+        int actual = convertOneHotToInt(singleLabel, 0, labelSize);
+        
+        correct[n] = predicted == actual;
+        
+        System.out.println("Correct: " + correct[n]);
+      }
       
       for(int pixelIndex = 0; pixelIndex < pixelData.length; pixelIndex++) {
         
@@ -134,7 +157,6 @@ public class ImageWriter {
         Logger.getLogger(ImageWriter.class.getName()).log(Level.SEVERE, null, ex);
       }
        
-      var labelData = batchData.getExpectedBatch();
       StringBuilder sb = new StringBuilder();
       
       for(int labelIndex = 0; labelIndex < numberOfImages; labelIndex++) {
